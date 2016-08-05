@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		 xmlns:fc="http://ns.adobe.com/flashcatalyst/2009" width="356" height="309"
+		 creationComplete="group1_creationCompleteHandler(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import controller.C_AddChip;
+			
+			import enum.TransactionType;
+			
+			import model.M_AddChip;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			
+			[Bindable]
+			private var m_mAddChip: M_AddChip = M_AddChip.getInstance();
+			
+			private var m_cAddChip: C_AddChip = new C_AddChip();
+			
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				m_cAddChip.handleAddChip();
+			}
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				m_cAddChip.hideUserDetailBox();
+			}
+			
+			protected function group1_creationCompleteHandler(event:FlexEvent):void
+			{
+				var items: ArrayCollection = new ArrayCollection();
+				items.addItem(TransactionType.DEPOSIT);
+				items.addItem(TransactionType.WITHDRAW);
+				
+				m_ddlType.dataProvider = items;
+				m_ddlType.selectedIndex = 0;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:DesignLayer d:userLabel="Layer 1">
+		<s:BitmapImage d:userLabel="Shape 14" x="1" y="1" d:locked="true" smooth="true"
+					   source="@Embed('/assets/images/box_jointable/Shape 14.png')"/>
+		<s:RichText d:userLabel="JOIN TABLE" textAlign="center" whiteSpaceCollapse="preserve" fontWeight="bold" fontFamily="Arial" color="#c6ff00" fontSize="18" lineHeight="120%" trackingRight="1%" kerning="off" x="142" y="32">
+			<s:content><s:p><s:span>ADD CHIP</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Table Name :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="111" y="89">
+			<s:content><s:p><s:span>Name :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Type :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="116" y="129">
+			<s:content><s:p><s:span>Type :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Amount :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="100" y="168">
+			<s:content><s:p><s:span>Amount :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:TextInput x="171" y="86" enabled="false" skinClass="components.txt_Buy_in"
+					 text="@{m_mAddChip.name}"/>
+		<s:TextInput x="172" y="164" skinClass="components.txt_Buy_in" restrict="0-9" 
+					 text="@{m_mAddChip.chip}"/>
+		<s:Button x="187" y="248" label="Cancel" 
+				  skinClass="components.btn_Cancel" click="button2_clickHandler(event)"/>
+		<s:Button x="98" y="248" label="   Ok" 
+				  skinClass="components.btn_Cancel" click="button1_clickHandler(event)"/>
+	</fx:DesignLayer>
+	<s:RichText id="richtext3" d:userLabel="Password dimenticata?" x="9" y="212" width="343"
+				color="#fefefe" fontFamily="Verdana" fontSize="12" lineHeight="120%"
+				text="@{m_mAddChip.status}" textAlign="center" whiteSpaceCollapse="preserve">			
+	</s:RichText>
+	<s:DropDownList id="m_ddlType" x="171" y="124" width="157" selectedItem="@{m_mAddChip.type}"></s:DropDownList>
+	
+</s:Group>
+
+

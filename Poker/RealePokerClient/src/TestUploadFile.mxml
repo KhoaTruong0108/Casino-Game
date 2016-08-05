@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:fc="http://ns.adobe.com/flashcatalyst/2009"
+			   xmlns:components="components.*"
+			   minWidth="955" minHeight="600"
+			   applicationComplete="application1_applicationCompleteHandler(event)">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			protected var fileRef: FileReference; 
+			protected function HandleFileBrowser(event:MouseEvent):void
+			{
+				m_btnFileBrowser.enabled = true;
+				//browser file to upload
+				var imgFilter : FileFilter = new FileFilter("Image Only(.jpg,.jpeg)", "*.jpg;*.jpeg;");
+				fileRef.browse(new Array(imgFilter));				
+			}
+			
+			protected function application1_applicationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				InitFileReference();
+				
+				m_userInfo.m_imgAvatar.visible = true;
+				m_userInfo.m_btnSit.visible = false;
+				m_userInfo.m_infoContainer.visible = true;
+				
+				m_userInfo.setAvatar("../assets/images/default_user.png");
+			}
+			protected function InitFileReference():void{
+				fileRef = new FileReference();
+				fileRef.addEventListener(Event.SELECT,fileSelectHandler);
+				fileRef.addEventListener(Event.CANCEL, fileCancelHandler);
+				fileRef.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
+				fileRef.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+				fileRef.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorEvent);
+				fileRef.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+				fileRef.addEventListener(Event.COMPLETE, fileCompleteHandler);
+				fileRef.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, fileDataCompleteHandler);
+			}
+			
+			/* protected function fileSelectHandler(event: Event):void{
+				//Finish Selected Image To Upload
+				m_lbFileName.text = fileRef.name;
+				m_btnFileBrowser.enabled = true;
+			} */
+			protected function fileSelectHandler(event: Event):void{
+				//Finish Selected Image To Upload
+				m_lbFileName.text = fileRef.name;
+				m_btnFileBrowser.enabled = true;
+			}
+			protected function fileCancelHandler(event: Event):void{
+				m_btnFileBrowser.enabled = true;	
+			}
+			protected function httpStatusHandler(event: HTTPStatusEvent):void{
+				m_lbUploadStatus.text = event.status.toString();
+					
+			}
+			protected function ioErrorHandler(event: IOErrorEvent):void{
+				m_lbUploadStatus.text = event.text;
+			}
+			protected function securityErrorEvent(event: SecurityErrorEvent):void{
+				m_lbUploadStatus.text = event.text;
+			}
+			protected function progressHandler(event: ProgressEvent):void{
+				var percent : Number = 0;
+				if(event.bytesTotal != 0){
+					percent = event.bytesLoaded/event.bytesTotal*100;
+					percent = Math.round(percent);
+				}
+				m_lbUploadStatus.text = percent.toString() + "%";
+			}
+			protected function fileCompleteHandler(event: Event):void{
+				
+			}
+			/* protected function fileDataCompleteHandler(event: DataEvent):void{
+				if(event.text == "true")
+					m_lbUploadStatus.text = "Upload Success";
+				else if(event.text == "fail")
+					m_lbUploadStatus.text = "Upload Fail";
+				
+				m_btnUploadFile.enabled = true;
+			}
+			 */
+			protected function fileDataCompleteHandler(event: DataEvent):void{
+				/* if(event.text == "true")
+					m_lbUploadStatus.text = "Upload Success";
+				else if(event.text == "fail")
+					m_lbUploadStatus.text = "Upload Fail"; */
+				
+				m_lbUploadStatus.text = event.text;
+				m_btnUploadFile.enabled = true;
+			}
+			
+			
+			protected function HandleImageUpload(event:MouseEvent):void
+			{
+				m_btnUploadFile.enabled = false;
+				var UPLOAD_URL : String = "HTTP://localhost:8008/upload";
+				//Upload Image
+				if(fileRef != null && 	fileRef.name != null && fileRef.name.length > 0){
+					fileRef.upload(new URLRequest(UPLOAD_URL), "khoa");		
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Button id="m_btnFileBrowser" x="503" y="129" label="Browser" click="HandleFileBrowser(event)"/>
+	<s:Button id="m_btnUploadFile" x="509" y="180" label="Upload" click="HandleImageUpload(event)"/>
+	<s:TextArea id="m_lbFileName" x="306" y="125" height="33"/>
+	<s:Label id="m_lbUploadStatus" x="307" y="166" width="187" height="10"/>
+	<components:_comp_User_Info x="193" y="315" id="m_userInfo">
+	</components:_comp_User_Info>
+	
+</s:Application>

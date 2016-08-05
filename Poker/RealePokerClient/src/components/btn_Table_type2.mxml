@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="139" height="58">
+	<fx:Metadata>[HostComponent("spark.components.Button")]</fx:Metadata>
+	<s:states>
+		<s:State name="up"/>
+		<s:State name="over"/>
+		<s:State name="down"/>
+		<s:State name="disabled"/>
+	</s:states>
+	<s:BitmapImage d:userLabel="Shape 4's Outer Glow" x="0" y="0" blendMode="screen" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 4_s Outer Glow.png')"
+				   visible.disabled="false"
+				   visible.up="false"/>
+	<s:BitmapImage d:userLabel="Shape 4's Outer Stroke" x="13" y="14" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 4_s Outer Stroke.png')"
+				   alpha.disabled="0.5"/>
+	<s:BitmapImage d:userLabel="Shape 4" x="14" y="15" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 4.png')"
+				   alpha.disabled="0.5"
+				   visible.down="false"/>
+	<s:BitmapImage d:userLabel="Shape 4 copy 2" x="14" y="15" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 4 copy 2.png')"
+				   visible.disabled="false"
+				   visible.over="false"
+				   visible.up="false"/>
+	<s:RichText id="labelDisplay" d:userLabel="Show HAND" color="#ffffff"
+				fontFamily="Verdana" fontSize="13.05" fontWeight="bold" lineHeight="120%"
+				whiteSpaceCollapse="preserve"
+				alpha.disabled="0.5" tabStops.disabled="S0 S50"
+				x="13" y="24" width="116" textAlign="center">
+	</s:RichText>
+</s:Skin>

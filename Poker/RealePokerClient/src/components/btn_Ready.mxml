@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="206" height="73">
+	<fx:Metadata>[HostComponent("spark.components.Button")]</fx:Metadata>
+	<s:states>
+		<s:State name="up"/>
+		<s:State name="over"/>
+		<s:State name="down"/>
+		<s:State name="disabled"/>
+	</s:states>
+	<s:BitmapImage x="0" y="0" smooth="true" includeIn="up"
+				   source="@Embed('/assets/images/table/Ready_up.png')"/>
+	<s:BitmapImage x="0" y="0" smooth="true" includeIn="over"
+				   source="@Embed('/assets/images/table/Ready_over.png')"/>
+	<s:BitmapImage x="0" y="0" smooth="true" includeIn="down"
+				   source="@Embed('/assets/images/table/Ready_down.png')"/>
+	<s:RichText d:userLabel="Send" x="10" y="10" width="186" height="54" fontFamily="Verdana"
+				fontSize="31" fontWeight="bold" lineHeight="120%" textAlign="center"
+				verticalAlign="middle" whiteSpaceCollapse="preserve">
+		<s:content><s:p><s:span>Ready</s:span></s:p></s:content>
+	</s:RichText>
+</s:Skin>

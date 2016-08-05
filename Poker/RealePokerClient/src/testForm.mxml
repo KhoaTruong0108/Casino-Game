@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:fc="http://ns.adobe.com/flashcatalyst/2009"
+			   xmlns:components="components.*"
+			   xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+			   minWidth="955" minHeight="600" creationComplete="Init(event)" xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<mx:SoundEffect id="m_soundEffect" useDuration="false" loops="0"/>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import controller.C_ChatBox;
+			
+			import entity.game_Entity.Poker.PokerHandType;
+			
+			import model.M_ChatBox;
+			
+			import mx.collections.ArrayList;
+			import mx.core.SoundAsset;
+			import mx.events.FlexEvent;
+			
+			import zUtilities.Resource;
+			import zUtilities.SoundController;
+			
+			protected var m_cChatBox: C_ChatBox = C_ChatBox.getInstance();
+			protected var m_mChatBox: M_ChatBox = M_ChatBox.getInstance();
+			
+			private function getLogWinCard(pokerHand: String, listWinCard: ArrayList):String{
+				var log: String = "";
+				if(pokerHand == PokerHandType.FOUR_OF_KIND){
+					log = "four of kind of " + getCardNameById(parseInt(listWinCard.getItemAt(0).toString()));
+				}else if(pokerHand == PokerHandType.THREE_OF_KIND){
+					log = "three of kind of " + getCardNameById(parseInt(listWinCard.getItemAt(0).toString()));
+				}else if(pokerHand == PokerHandType.PAIR){
+					log = "pair of " + getCardNameById(parseInt(listWinCard.getItemAt(0).toString()));
+				}else if(pokerHand == PokerHandType.TWO_PAIRS){
+					var card1: int = parseInt(listWinCard.getItemAt(0).toString());
+					var card2: int = getCardKhongDongChat(card1, listWinCard);
+					log = "two pair of " + getCardNameById(card1) + "," + getCardNameById(card2); 
+				}else if(pokerHand == PokerHandType.FULL_HOUSE){
+					var card1: int = parseInt(listWinCard.getItemAt(0).toString());
+					var card2: int = getCardKhongDongChat(card1, listWinCard);
+					log = "full house of " + getCardNameById(card1) + "," + getCardNameById(card2); 
+				}else if(pokerHand == PokerHandType.ROYAL_FLUSH){
+					log = "royal flush of " + getLogListCard(listWinCard);
+				}else if(pokerHand == PokerHandType.STRAIGHT_FLUSH){
+					log = "straight flush of " + getLogListCard(listWinCard);
+				}else if(pokerHand == PokerHandType.STRAIGHT){
+					log = "straight of " + getLogListCard(listWinCard);
+				}else if(pokerHand == PokerHandType.FLUSH){
+					log = " flush of " + getLogListCard(listWinCard);
+				}else if(pokerHand == PokerHandType.HIGH_CARD){
+					log = "high card of " + getCardNameById(parseInt(listWinCard.getItemAt(0).toString()));
+				}
+				return log;
+			}
+			private function getCardKhongDongChat(card1:int, listWinCard: ArrayList):int{
+				for(var i: int = 0; i< listWinCard.length; i++){
+					var card2: int = parseInt(listWinCard.getItemAt(i).toString());
+					if(Math.abs(card1 - card2) >= 10){
+						return card2;
+					}
+				}
+				return -1;
+			}
+			private function getLogListCard(listWinCard: ArrayList):String{
+				var str: String = "";
+				if(listWinCard.length > 0){
+					str = getCardNameById(parseInt(listWinCard.getItemAt(0).toString()));
+					for(var i: int = 1; i< listWinCard.length; i++){
+						var card: String = getCardNameById(parseInt(listWinCard.getItemAt(i).toString()));
+						str += "," + card;
+					}
+				}
+				return str;
+			}
+			private function getCardNameById(cardID: int):String{
+				if(cardID > 130){
+					return "K";
+				}else if(cardID > 120 && cardID < 125){
+					return "Q";
+				}else if(cardID > 110 && cardID < 115){
+					return "J";
+				}else if(cardID > 10 && cardID < 15){
+					return "A";
+				}else if(cardID != -1){
+					var i:int = (cardID / 10);
+					return i.toString();
+				}
+				return "";
+			}
+			private function logGameResult(userName: String, pokerHand: String, listWinCard: ArrayList, winChip: Number):void{
+				var log: String = userName + " won the pot with ";
+				log += getLogWinCard(pokerHand, listWinCard);
+				log += " and " + winChip +" chips";
+				
+				m_logScreen.text = log;
+			}
+			protected function Init(event:FlexEvent):void
+			{
+				/* m_userInfo.setVisibled(true);
+				m_userInfo.isSitVisibled = false;
+				m_userInfo.startTimer(); */
+				
+				m_lblTest.text = "tour_room1";
+				m_lblTest.text += " ; " + m_lblTest.text.search("toursdf_").toString();
+			}
+			
+			protected function testCase1():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.HIGH_CARD;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(13);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			protected function testCase2():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.PAIR;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(132);
+				listWinCard.addItem(133);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			protected function testCase3():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.TWO_PAIRS;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(122);
+				listWinCard.addItem(121);
+				listWinCard.addItem(111);
+				listWinCard.addItem(114);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			protected function testCase4():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.THREE_OF_KIND;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(13);
+				listWinCard.addItem(12);
+				listWinCard.addItem(11);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			protected function testCase5():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.FULL_HOUSE;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(13);
+				listWinCard.addItem(12);
+				listWinCard.addItem(11);
+				listWinCard.addItem(52);
+				listWinCard.addItem(53);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			protected function testCase6():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.STRAIGHT;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(21);
+				listWinCard.addItem(31);
+				listWinCard.addItem(42);
+				listWinCard.addItem(54);
+				listWinCard.addItem(63);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			protected function testCase7():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.STRAIGHT_FLUSH;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(51);
+				listWinCard.addItem(61);
+				listWinCard.addItem(71);
+				listWinCard.addItem(81);
+				listWinCard.addItem(91);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			protected function testCase8():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.FLUSH;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(21);
+				listWinCard.addItem(31);
+				listWinCard.addItem(71);
+				listWinCard.addItem(11);
+				listWinCard.addItem(131);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			protected function testCase9():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.ROYAL_FLUSH;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(11);
+				listWinCard.addItem(131);
+				listWinCard.addItem(121);
+				listWinCard.addItem(111);
+				listWinCard.addItem(101);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			protected function testCase10():void{
+				var userName: String = "user1";
+				var pokerHandType: String = PokerHandType.FOUR_OF_KIND;
+				var winChip: Number = 200;
+				
+				var listWinCard: ArrayList = new ArrayList();
+				listWinCard.addItem(91);
+				listWinCard.addItem(92);
+				listWinCard.addItem(94);
+				listWinCard.addItem(93);
+				
+				logGameResult(userName, pokerHandType, listWinCard, winChip);
+			}
+			
+		]]>
+	</fx:Script>
+	<s:TextArea id="m_logScreen" x="281" y="105"/>
+	<components:_comp_User_Info id="m_userInfo" x="281" y="345">
+	</components:_comp_User_Info>
+	<s:Label id="m_lblTimer" x="89" y="286" text="Label"/>
+	<s:Label id="m_lblTest" x="89" y="68" text="Label"/>
+</s:Application>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:fc="http://ns.adobe.com/flashcatalyst/2009"
+			   xmlns:components="components.*"
+			   minWidth="955" minHeight="600" creationComplete="Init(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			
+			import spark.events.TextOperationEvent;
+			[Bindable]
+			private var m_mBetBoard:M_testBinding = M_testBinding.getInstance();
+			private var m_cBetBoard: C_testBinding = new C_testBinding();
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				m_cBetBoard.beginBind(m_min.text, m_max.text, m_amount.text);
+				var value: Number = parseFloat(m_amount.text);
+				
+				m_txtRaise.text = RoundNumber(value).toString();
+			}
+			
+			public static function RoundNumber(value: Number): Number{
+				if(isNaN(value))
+					return value;
+				var temp : Number = int( value*10 ) / 10;
+				return temp;
+			}
+			
+			protected function hscrollbar1_changeHandler(event:Event):void
+			{
+				//m_txtRaise.text = hscrollbar1.value.toString();
+				m_mBetBoard.strRaiseValue = hscrollbar1.value.toString();
+			}
+			
+			protected function m_txtRaise_changeHandler(event:TextOperationEvent):void
+			{
+				//hscrollbar1.value = Number(m_txtRaise.text);
+				m_mBetBoard.iRaiseValue = Number(m_txtRaise.text);
+			}
+			
+			protected var m_userVisible: Boolean;
+			protected var m_sitVisible: Boolean;
+			protected function m_userStartTimer_clickHandler(event:MouseEvent):void
+			{
+				m_userInfo.startTimer();
+			}
+			
+			protected function m_userVisible_clickHandler(event:MouseEvent):void
+			{
+				m_userVisible = !m_userVisible;
+				m_userInfo.setVisibled(m_userVisible);
+			}
+			
+			protected function Init(event:FlexEvent):void
+			{
+				m_userInfo.isSitVisibled = false;
+				m_userInfo.setVisibled(true);
+			}
+			
+			protected function m_btnSitVisible_clickHandler(event:MouseEvent):void
+			{
+				m_sitVisible = !m_sitVisible;
+				m_userInfo.isSitVisibled = m_sitVisible;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:HScrollBar id="hscrollbar1" x="100" y="100"
+				  change="hscrollbar1_changeHandler(event)" fixedThumbSize="true"
+				  maximum="{m_mBetBoard.maximum}" minimum="{m_mBetBoard.minnimum}"
+				  skinClass="components._scroll_Table_Fold" stepSize="1"
+				  value="@{m_mBetBoard.iRaiseValue}"/>
+	<s:TextInput id="m_txtRaise" x="340" y="94"
+				 change="m_txtRaise_changeHandler(event)" skinClass="components.txt_Table_Fold"
+				 text="@{m_mBetBoard.strRaiseValue}"/>
+	<s:Button x="250" y="246" label="Bind" click="button1_clickHandler(event)"/>
+	
+	<s:TextInput id="m_amount" x="424" y="174"/>
+	<s:TextInput id="m_min" x="91" y="174" text="100"/>
+	<s:TextInput id="m_max" x="230" y="174" text="1000"/>
+	<components:_comp_User_Info id="m_userInfo" x="90" y="355">
+	</components:_comp_User_Info>
+	<s:Button id="m_btnUserStartTimer" x="310" y="385" label="start timer" click="m_userStartTimer_clickHandler(event)"/>
+	<s:Button id="m_btnUserVisible" x="310" y="432" label="visible" click="m_userVisible_clickHandler(event)"/>
+	<s:Button id="m_btnSitVisible" x="310" y="473" label="sit visible" click="m_btnSitVisible_clickHandler(event)"/>
+</s:Application>

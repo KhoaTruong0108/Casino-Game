@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:fc="http://ns.adobe.com/flashcatalyst/2009" minWidth="955" minHeight="600" >
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.rpc.AsyncToken;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			protected function HandleRegisterClick(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				var http : HTTPService = new HTTPService();
+				http.url = "http://localhost:8008/register";
+				//http.url = "http://search.store.zing.vn/audio/top?t=au&n=5&fr=0&st=1";
+				http.method = "POST";
+				http.addEventListener("result", httpResult);
+				http.addEventListener("fault", httpFault);
+				
+				
+				var data: Object = new Object();
+				data.userName = "kenjuzi";
+				data.password = "123";
+				data.email = "khoa@yahoo.com";
+				data.displayName = "Kenjuzi";
+				
+				var params:Object = {};
+				params["paramName"] = data;
+				
+				http.send(data);
+				
+			}
+			protected function httpResult(evt: ResultEvent):void{
+				m_tbWebResult.text = "HTTP RESULT";
+				m_tbWebResult.text += evt.result;
+			}
+			protected function httpFault(evt: FaultEvent):void{
+				m_tbWebResult.text = "HTTP FAULT";
+				m_tbWebResult.text += evt.fault.message;
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:Button id="m_btnRegister" x="626" y="265" label="Register" click="HandleRegisterClick(event)"/>
+	<s:TextArea id="m_tbWebResult" x="327" y="95" width="365"/>
+	<s:Label x="327" y="66" text="HTTP Request Result"/>
+	
+</s:Application>

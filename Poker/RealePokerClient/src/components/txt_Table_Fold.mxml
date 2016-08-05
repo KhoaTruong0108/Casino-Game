@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="84" height="58">
+	<fx:Metadata>[HostComponent("spark.components.TextInput")]</fx:Metadata>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="disabled"/>
+		<s:State name="normalWithPrompt"/>
+		<s:State name="disabledWithPrompt"/>
+	</s:states>
+	<s:BitmapImage d:userLabel="Shape 8's Outer Glow" x="0" y="0" blendMode="screen"
+				   smooth="true"
+				   source="@Embed('/assets/images/table/Shape 8_s Outer Glow.png')"/>
+	<s:BitmapImage d:userLabel="Shape 8's Outer Stroke" x="13" y="14" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 8_s Outer Stroke.png')"/>
+	<s:BitmapImage d:userLabel="Shape 8" x="14" y="15" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 8.png')">
+		<s:mask>
+			<s:Group x="0" y="0">
+				<s:Path winding="evenOdd" data="M 7.6 0.25 L 47.85 0.25 C 51.85 0.25 55.05 3.5 55.05 7.5 L 55.05 20.7 C 55.05 24.7 51.85 27.95 47.85 27.95 L 7.6 27.95 C 3.6 27.95 0.35 24.7 0.35 20.7 L 0.35 7.5 C 0.35 3.5 3.6 0.25 7.6 0.25">
+					<s:fill>
+						<s:SolidColor color="#ff0000"/>
+					</s:fill>
+				</s:Path>
+			</s:Group>
+		</s:mask>
+	</s:BitmapImage>
+	<s:RichText id="promptDisplay" includeIn="disabledWithPrompt,normalWithPrompt" x="5" y="5" fontFamily="Arial"/>
+	<s:RichEditableText id="textDisplay" x="10" y="25" width="64" color="#ffffff" fontFamily="Arial"
+						fontSize="12" heightInLines="1" textAlign="center"/>
+</s:Skin>

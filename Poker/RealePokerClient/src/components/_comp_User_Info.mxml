@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:fc="http://ns.adobe.com/flashcatalyst/2009" width="143" height="185">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.greensock.TweenMax;
+			import com.smartfoxserver.v2.core.SFSEvent;
+			import com.smartfoxserver.v2.entities.data.ISFSObject;
+			import com.smartfoxserver.v2.entities.data.SFSObject;
+			import com.smartfoxserver.v2.entities.managers.IUserManager;
+			import com.smartfoxserver.v2.requests.ExtensionRequest;
+			
+			import controller.C_Chip;
+			import controller.C_JoinTable;
+			
+			import model.M_JoinTable;
+			
+			import mx.events.FlexEvent;
+			
+			import params.RequestParams;
+			import params.ResponseParams;
+			import params.RoomVarParams;
+			
+			import spark.components.BorderContainer;
+			
+			import zUtilities.GameVariable;
+			import zUtilities.Logger;
+			import zUtilities.NumberFormat;
+			import zUtilities.Resource;
+			import zUtilities.ServerController;
+			import zUtilities.SoundController;
+			
+			private static const DELAY_USER_BET:int = 200; // 20s
+			
+			[Bindable]
+			private var m_classCard1:Object = null;
+			[Bindable]
+			private var m_classCard2:Object = null;
+			[Bindable]
+			private var m_strUsername:String = "";
+			[Bindable]
+			private var m_strUserFish:String = "";
+			[Bindable]
+			private var m_strUserRaise:String = "";
+			[Bindable]
+			private var m_isVisibled:Boolean = false;
+			[Bindable]
+			private var m_isSitVisibled:Boolean = true;
+			[Bindable]
+			private var m_isD:Boolean = false;
+			[Bindable]
+			private var m_isSB:Boolean = false;
+			[Bindable]
+			private var m_isBB:Boolean = false;
+			[Bindable]
+			private var m_strWinnerFish:String = "";
+			[Bindable]
+			private var m_strInfo:String = "";
+			[Bindable]
+			private var m_strInfoSitOut:String = "";
+			private var m_isReadyConfirm:Boolean = false;
+			private var m_nCard:int = 0;
+			
+			private var m_isFold:Boolean = false;
+			private var m_isSitingOut:Boolean = false;
+			
+			private var m_cChip:C_Chip = new C_Chip();
+			
+			private var timer:Timer = null;
+			
+			private var m_myPos:int = -1;			
+			
+			private var m_cardSource:Resource = Resource.getInstance();
+			
+			
+			private var m_server:ServerController = ServerController.getInstance();
+			
+			private var m_mJoinTable:M_JoinTable = M_JoinTable.getInstance();
+			private var m_cJoinTable:C_JoinTable = new C_JoinTable();
+			
+			private var m_logger: Logger = new Logger();
+			
+			public function dealCard(card:String, delay:Number):void{
+				if(m_nCard == 0){
+					_dealCard(m_card_1, 18, card, delay);
+					m_nCard = 1;
+				}
+				else{
+					_dealCard(m_card_2, 65, card, delay);
+					m_nCard = 0;
+				}
+				
+				SoundController.playSound("deal_card");
+			}
+			
+			public function setSitOut(sitOut:Boolean):void{
+				m_logger.Log("SIT OUT: user: " + m_strUsername + "; Sitout: " + sitOut);
+
+				m_isSitingOut = sitOut;
+				if(sitOut == true){
+					_setInfoSitOut("sit out");
+				}
+				else{
+					_hideInfoSitOut();
+				}
+			}
+			
+			private function _dealCard(card:Image, x:Number, cardSource:String, delay:Number):void{
+				if(m_isFold == true || m_isSitingOut == true){
+					return;
+				}
+				card.x = 495 - this.x;
+				card.y = 160 - this.y;
+				card.width = 0.6;
+				card.height = 0.86;
+				card.source = m_cardSource.getImg(cardSource);
+				card.visible = true;
+				TweenMax.to(card, 0.5, {x:x, y:21, scaleX:100, scaleY:100, delay:delay});
+			}
+			
+			public function setUserInfo(username:String, fish:Number, avatar: String):void{
+				m_strUsername = username;
+				if(fish < 0)
+					fish = 0;
+				m_strUserFish = NumberFormat.getDecimalFormat(fish);
+				setAvatar(avatar);
+			}
+			
+			public function setUserOpenCard(card1:String, card2:String):void{
+				setUserCard(m_cardSource.getImg(card1), m_cardSource.getImg(card2));
+			}
+			
+			public function setUserCloseCard():void{
+				setUserCard(m_cardSource.getImg("999"), m_cardSource.getImg("999"));
+			}
+			
+			public function setUserFold():void{
+				m_card_1.alpha = 0.8;
+				m_card_2.alpha = 0.8;
+				imgPokerHand.source = m_cardSource.getImg(ResponseParams.USER_FOLD);
+				m_isFold = true;
+			}
+			
+			public function incUserFish(amount:Number):void{
+				setUserFish(getUserFish() + amount);
+			}
+			
+			public function descUserFish(amount:Number):void{
+				if(getUserFish() >= amount)
+					setUserFish(getUserFish() - amount);
+				else
+					setUserFish(0.0);
+			}
+			
+			public function incUserRaise(amount:Number):void{				
+				var userRaise:Number = 0;
+				if(m_strUserRaise != ""){
+					userRaise = NumberFormat.getNumber(m_strUserRaise);
+				}
+				
+				if(userRaise + amount > 0){
+					m_strUserRaise = NumberFormat.getDecimalFormat(userRaise + amount);
+					userBet(amount * (-1));
+				}else{
+					m_strUserRaise = "";
+				}
+			}
+			
+			public function clear():void{
+				m_strUserRaise = "";
+				imgPokerHand.source = null;				
+				m_card_1.source = null;
+				m_card_2.source = null;
+				m_isBB = false;
+				m_isD = false;
+				m_isSB = false;				
+				stopTimer();
+				swfResult.source = null;
+				lbWinnerFish.text = "";
+				m_isFold = false;
+				m_tickReady.source = null;
+				m_swfFSH.source = null;
+				_hideInfo();
+			}
+			
+			public function setHide():void{
+				clear();
+				m_strUserFish = "";
+				m_strUsername = "";
+				m_isVisibled = false;
+				m_isSitVisibled = true;				
+			}
+			
+			public function setPokerHandType(type:String):void{				
+				imgPokerHand.source = m_cardSource.getImg(type);
+			}
+			
+			public function setVisibled(visibled:Boolean):void{
+				m_isVisibled = visibled;
+				
+				if(m_isVisibled == false){
+					m_swfTimer.visible = false;
+				}
+			}
+			
+			public function get strUserName():String{
+				return m_strUsername;
+			}
+			
+			public function get isVisibled():Boolean{
+				return m_isVisibled;
+			}
+			
+			public function set isSitVisibled(value:Boolean):void{
+				m_isSitVisibled = value;
+			}
+			
+			private function userBet(coin:Number):void{
+				if(coin == 0.0){
+					return;
+				}
+				lb.text = "-";
+				if(coin > 0.0){
+					lb.text = "+";
+				}
+				lb.text += NumberFormat.getDecimalFormat(Math.abs(coin));
+				lb.x = 60;
+				lb.y = 60;
+				lb.alpha = 1;				
+				TweenMax.to(lb, 3, {x:60, y:-40, alpha:0});
+				TweenMax.delayedCall(3, function():void{
+					lb.alpha = 0;					
+				});
+				
+				throwChip(coin);
+			}
+			
+			public function setWinnerMoney(amount:Number):void{
+				if(amount <= 0){
+					return;
+				}
+				lbWinnerFish.text = "+";
+				lbWinnerFish.text += NumberFormat.getDecimalFormat(Math.abs(amount));
+				lbWinnerFish.x = 450 - this.x;
+				lbWinnerFish.y = 180 - this.y;
+				lbWinnerFish.visible = true;
+				TweenMax.to(lbWinnerFish, 0.8, {x:18, y:-11});
+//				TweenMax.delayedCall(3, function():void{
+////					lbWinnerFish.visible = false;
+//				});
+				m_cChip.userWin(this.x + 10 - 400, this.y + 60 - 186, amount);
+				
+				SoundController.playSound("get_chip");
+			}
+			
+			public function resetWinnerMoney():void{
+				lbWinnerFish.text = "";
+			}
+			
+			private function setUserCard(card1:Object, card2:Object):void{
+				m_card_1.source = card1;
+				m_card_2.source = card2;
+				m_card_1.alpha = 0;
+				m_card_2.alpha = 0;
+				TweenMax.to(m_card_1, 1.5, {alpha:1});
+				TweenMax.to(m_card_2, 1.5, {alpha:1});
+			}
+			
+			public function setUserFish(fish:Number):void{
+				m_strUserFish = NumberFormat.getDecimalFormat(fish);
+			}
+			
+			private function getUserFish():Number{
+				return NumberFormat.getNumber(m_strUserFish);
+			}
+			
+			protected function m_btnSit_clickHandler(event:MouseEvent):void
+			{	
+				m_mJoinTable.sitPos = m_myPos;
+				m_cJoinTable.showJoinTableBox();
+			}
+
+			public function stopTimer():void{
+				try
+				{
+					m_swfTimer.stop();
+					m_swfTimer.visible = false;
+					timer.stop();					
+				} 
+				catch(error:Error) 
+				{
+					
+				}				
+			}
+			
+			public function get myPos():int
+			{
+				return m_myPos;
+			}
+
+			public function set myPos(value:int):void
+			{
+				m_myPos = value;
+			}
+			
+			//run all time life effect take 26s .
+			public function startTimer():void{
+				try
+				{
+					m_swfTimer.visible = true && m_isVisibled;				
+					m_swfTimer.gotoAndStop(1);
+					timer = new Timer(100, DELAY_USER_BET);
+					var isAlert: Boolean = true;
+					timer.addEventListener(TimerEvent.TIMER, function(event:TimerEvent):void{
+						m_swfTimer.gotoAndStop(timer.currentCount);
+						if(timer.currentCount > 150 && isAlert
+							&& m_strUsername == GameVariable.GetInstance().UserInfo.UserName){
+							SoundController.playSound("time_over");
+							isAlert = false;
+						}
+					});
+					timer.addEventListener(TimerEvent.TIMER_COMPLETE, function(event:TimerEvent):void{
+						m_swfTimer.stop();
+						m_swfTimer.visible = false;
+					});
+					timer.start();
+				} 
+				catch(error:Error){}
+			}
+			
+			public function setResult(result:String):void{
+				try
+				{
+					if(m_isSitingOut == true){
+						return;
+					}
+					if(m_isFold == false){
+						_setInfo(result);
+					}
+				} 
+				catch(error:Error){}
+			}
+			
+			public function setTickReady(img:String):void{
+				try
+				{
+					clear();
+					m_tickReady.source = m_cardSource.getImg(img);
+				} 
+				catch(error:Error){}
+			}
+			
+			public function setFSH(betType:String):void{
+				/* if(m_isSitingOut == true){
+					return;
+				} */
+				if(betType == ResponseParams.USER_CALL){
+					_setInfo("call");
+				}
+				else if(betType == ResponseParams.USER_CHECK){
+					_setInfo("check");
+				}
+				else if(betType == ResponseParams.USER_RAISE){
+					_setInfo("raise");
+				}
+				else if(betType == ResponseParams.USER_BET){
+					_setInfo("bet");
+				}
+				else if(betType == ResponseParams.USER_FOLD){
+					_setInfo("fold");
+				}
+				else if(betType == ResponseParams.USER_ALL_IN){
+					_setInfo("showhand");
+				}
+			}
+			
+			public function get isDealer():Boolean
+			{
+				return m_isD;
+			}
+
+			public function set isDealer(value:Boolean):void
+			{
+				m_isD = value;
+			}
+
+			public function get isSmallBlind():Boolean
+			{
+				return m_isSB;
+			}
+
+			public function set isSmallBlind(value:Boolean):void
+			{
+				m_isSB = value;
+			}
+
+			public function get isBigBlind():Boolean
+			{
+				return m_isBB;
+			}
+
+			public function set isBigBlind(value:Boolean):void
+			{
+				m_isBB = value;
+			}
+
+			public function get isFold():Boolean
+			{
+				return m_isFold;
+			}
+
+			public function set isFold(value:Boolean):void
+			{
+				m_isFold = value;
+			}
+
+			[Bindable]
+			public function get isReadyConfirm():Boolean
+			{
+				return m_isReadyConfirm;
+			}
+
+			public function set isReadyConfirm(value:Boolean):void
+			{
+				m_isReadyConfirm = value;
+			}
+
+			private function throwChip(amount:Number):void{
+				var x:Number = this.x + 50 - 350;
+				var y:Number = this.y + 140 - 186;
+				m_cChip.userBet(x, y, amount);
+			}
+			
+			private function _setInfo(info:String):void{
+				_hideInfo();
+				TweenMax.delayedCall(0.5, function():void{
+					m_strInfo = info.toUpperCase();
+					_showInfo();
+				});
+			}
+			
+			private function _hideInfo():void{
+				TweenMax.to(m_infoContainer, 0.5, {x:0, y:101});
+			}
+			
+			private function _showInfo():void{
+				TweenMax.to(m_infoContainer, 0.5, {x:0, y:80});
+			}
+			
+			private function _setInfoSitOut(info:String):void{
+				/* _hideInfoSitOut();
+				TweenMax.delayedCall(0.5, function():void{
+					m_strInfoSitOut = info.toUpperCase();
+					_showInfoSitOut();
+				}); */
+				m_strInfoSitOut = info.toUpperCase();
+				_showInfoSitOut();
+			}
+			
+			private function _hideInfoSitOut():void{
+				TweenMax.to(m_infoSitOutContainer, 0.5, {x:0, y:101});
+			}
+			
+			private function _showInfoSitOut():void{
+				TweenMax.to(m_infoSitOutContainer, 0.5, {x:0, y:80});
+			}
+
+			public function get isSitingOut():Boolean
+			{
+				return m_isSitingOut;
+			}
+
+			public function setAvatar(address: String):void{
+				m_imgAvatar.source = address;
+			}
+			
+			[Bindable]
+			[Embed(source="assets/images/default_user.png")]
+			private var imgClass:Class; 
+
+			protected function m_imgAvatar_ioErrorHandler(event:IOErrorEvent):void
+			{
+				m_imgAvatar.source = imgClass;
+			}
+			
+		]]>
+	</fx:Script>
+	<s:Image id="m_card_1" x="18" y="25" width="60" height="86" source="{m_classCard1}" visible="{m_isVisibled}"/>
+	<s:Image id="m_card_2" x="65" y="25" width="60" height="86" source="{m_classCard2}" visible="{m_isVisibled}"/>
+	
+	<s:BorderContainer id="m_infoContainer" y="101" width="144" visible="{m_isVisibled}"
+					   borderAlpha="0" backgroundAlpha="0">
+		<s:Image x="15" visible="{m_isVisibled}"
+				 source="@Embed('assets/images/table/bg_03.png')" />
+		<s:Label x="15" y="0" width="115" height="24" color="#FFFFFF" fontFamily="Verdana"
+				 visible="{m_isVisibled}"
+				 fontWeight="bold" text="{m_strInfo}" textAlign="center" verticalAlign="middle"/>
+	</s:BorderContainer>
+	<s:BorderContainer id="m_infoSitOutContainer" y="101" width="144" visible="{m_isVisibled}"
+					   borderAlpha="0" backgroundAlpha="0">
+		<s:Image x="15" visible="{m_isVisibled}"
+				 source="@Embed('assets/images/table/bg_03.png')" />
+		<s:Label x="15" y="0" width="115" height="24" color="#FFFFFF" fontFamily="Verdana"
+				 visible="{m_isVisibled}"
+				 fontWeight="bold" text="{m_strInfoSitOut}" textAlign="center" verticalAlign="middle"/>
+	</s:BorderContainer>
+	
+	<s:Image x="0" y="101" width="143" height="83" visible="{m_isVisibled}"
+			 source="@Embed('/assets/images/table/_user_back.png')"/>	
+	<s:Label visible="{m_isVisibled}" x="65" y="144" width="68" color="#fefefe" 
+			 fontSize="14" fontFamily="Verdana" fontWeight="bold"
+			 text="{m_strUsername}" textAlign="center"/>
+	<s:Label visible="{m_isVisibled}" x="65" y="161" width="69" color="#5CD389"
+			 fontSize="14" fontFamily="Verdana" fontWeight="bold"
+			 text="{m_strUserFish}" textAlign="center"/>
+	
+	<s:Label id="lb" x="60" color="#F03030" fontSize="30" alpha="0" y="80"/>
+	
+	<s:Label visible="{m_isVisibled}" x="21" y="11" width="104" color="#FCFCFB"
+			 fontSize="10" fontFamily="Verdana" fontWeight="bold"
+			 text="{m_strUserRaise}"/>
+	<s:Label id="lbWinnerFish" visible="false" x="18" y="-11" width="104" 
+			 color="#5CD389" fontWeight="bold" fontFamily="Verdana" fontSize="14"
+			 />
+	
+	<s:Button x="4" y="111" visible="{m_isSitVisibled}" id="m_btnSit"	skinClass="components.btn_Sit"		  
+			  click="m_btnSit_clickHandler(event)"/>	
+	<s:BitmapImage x="-26" y="100" smooth="true" 
+				   visible="{m_isD}"
+				   source="@Embed('/assets/images/table/Shape 11.png')"/>
+	<s:Label x="-14" y="110" text="D" fontSize="20" color="#5f2f3f" fontWeight="bold" visible="{m_isD}"/>
+
+	<s:BitmapImage id="m_tickReady"
+				   x="114" y="78" smooth="true"/>
+	
+	<s:BitmapImage x="125" y="96" smooth="true" 
+				   visible="{m_isSB || m_isBB}"
+				   source="@Embed('/assets/images/table/Shape 11.png')"/>
+	
+	<s:Label x="131" y="106" text="SB" fontSize="20" color="#8a0a3a" fontWeight="bold" visible="{m_isSB}"/>
+	<s:Label x="131" y="106" text="BB" fontSize="20" color="#8a0a3a" fontWeight="bold" visible="{m_isBB}"/>
+	<s:MovieClipSWFLoader autoStop="false" visible="false" id="m_swfTimer" 
+						  source="@Embed('/assets/images/table/timer_poker.swf')" x="83" y="108"/>	
+	<s:SWFLoader id="swfResult" x="29" y="94"/>
+	<s:Image x="0" y="60" id="imgPokerHand"/>
+	<s:SWFLoader x="2" y="82" id="m_swfFSH"/>
+	<s:Image id="m_imgAvatar" visible="{m_isVisibled}" x="10" y="111" width="59" height="64"
+			 source="@Embed('/assets/images/default_user.png')" ioError="m_imgAvatar_ioErrorHandler(event)"/>
+</s:Group>

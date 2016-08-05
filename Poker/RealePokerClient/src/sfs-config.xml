@@ -1,0 +1,24 @@
+<!-- 
+
+	:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	SFS2X Client Configuration file
+	(c) 2010 gotoAndPlay
+	:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+-->
+
+
+<SmartFoxConfig>
+
+	<!-- Mandatory Settings -->
+	<ip>127.0.0.1</ip>
+	<port>9933</port>
+	<zone>RealPokerServer</zone>
+	<!-- End Mandatory Settings -->
+	
+	<debug>true</debug>
+	
+	<!-- For generic http port communication -->
+	<httpPort>8080</httpPort>
+	
+</SmartFoxConfig>

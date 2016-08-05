@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+			   xmlns:components="components.*"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   x="13" y="0" width="1000" height="600" backgroundColor="#000000"
+			   hasFocusableChildren="true"
+			   preloaderChromeColor="#FFFFFF" creationComplete="Init(event)">
+	<fx:Script>
+		<![CDATA[
+			import controller.C_Admin;
+			import controller.C_Login;
+			import controller.MainController;
+			
+			import enum.TournamentStatus;
+			
+			import model.M_Admin;
+			import model.M_Login;
+			
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			protected var m_cLogin: C_Login = new C_Login();
+			protected var m_cAdmin: C_Admin = new C_Admin();
+			[Bindable]
+			protected var m_mLogin: M_Login = M_Login.getInstance();
+			[Bindable]
+			protected var m_mAdmin: M_Admin = M_Admin.getInstance();
+			
+			private var m_cMain:MainController = MainController.getInstance();
+			
+			protected function Init(event:FlexEvent):void
+			{
+				m_cMain.setMain(this);
+			}
+			
+			protected function navigatorcontent1_clickHandler(event:MouseEvent):void
+			{
+				Alert.show("Working fine.");
+				
+			}
+			
+			protected function m_tbAdmin_changeHandler(event:IndexChangeEvent):void
+			{
+				switch(m_tbAdmin.selectedIndex){
+					case 0:
+						break;
+					case 1:
+						m_cAdmin.handleGetListUser();
+						break
+					case 2:
+						m_cAdmin.handleGetListRoom();
+						break
+					case 3:
+						m_cAdmin.handleGetListTournament();
+						break
+					case 4:
+						m_cAdmin.handleGetLevelCollection();
+						break
+					case 5:
+						m_cAdmin.handleGetTransaction();
+						break
+				}
+			}
+			
+			protected function m_listUserDetail_doubleClickHandler(event:MouseEvent):void
+			{
+				m_cAdmin.handleUpdateUser()
+			}
+			
+			protected function datagrid1_doubleClickHandler(event:MouseEvent):void
+			{
+				m_cAdmin.handleUpdateRoom();
+			}
+			
+			protected function datagrid2_doubleClickHandler(event:MouseEvent):void
+			{
+				m_cAdmin.handleUpdateTour();
+			}
+			
+			protected function m_listUserDetail_clickHandler(event:MouseEvent):void
+			{
+				m_cAdmin.handleGetMoreUser();
+			}
+			
+			protected function m_btnFindUser_clickHandler(event:MouseEvent):void
+			{
+				m_cAdmin.findUser(m_mAdmin.findUserName);
+			}
+			
+			protected function datagrid2_clickHandler(event:MouseEvent):void
+			{
+				/* if(m_mAdmin != null && m_mAdmin.oSelectedTour != null){
+					if(m_mAdmin.oSelectedTour.status == TournamentStatus.STOPPING){
+						m_btnActiveTournament.label = "Active";
+					}else if(m_mAdmin.oSelectedTour.status == TournamentStatus.WAITING){
+						m_btnActiveTournament.label = "Deactive";
+					}else{
+						m_btnActiveTournament.visible = false;
+						return;
+					}
+					m_btnActiveTournament.visible = true;
+				} */
+				if(m_mAdmin != null && m_mAdmin.oSelectedTour != null){
+					if(m_mAdmin.oSelectedTour.status == TournamentStatus.STOPPING){
+						m_btnActiveTournament.label = "Active";
+					}else {
+						m_btnActiveTournament.label = "Deactive";
+					}
+					m_btnActiveTournament.visible = true;
+				}
+			}
+			
+			protected function datagrid3_doubleClickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+			}
+			
+			protected function dropdownlist1_changeHandler(event:IndexChangeEvent):void
+			{
+				if(m_mAdmin.oSelectedLevelCollection != null){
+					m_cAdmin.handleGetListLevel();
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<s:State name="Login"/>
+		<s:State name="Admin"/>
+	</s:states>
+	
+	<fx:DesignLayer d:userLabel="Layer 1">
+		<s:BitmapImage id="bitmapimage2" x="-12" y="0" d:locked="true" smooth="true"
+					   source="@Embed('/assets/images/RasterizedItems.jpg')"/>
+		<s:TextInput id="m_tbUserName" includeIn="Login" x="378" y="345" enabled="true"
+					 skinClass="components.txt_Login_Username" text="@{m_mLogin.UserName}"/>
+		<s:BitmapImage id="bitmapimage1" includeIn="Login" x="378" y="394" smooth="true"
+					   source="@Embed('/assets/images/RasterizedItems1.png')"/>
+		<s:TextInput id="m_tbPassword" includeIn="Login" x="389" y="406" enabled="true"
+					 skinClass="components.txt_Login_Password" text="@{m_mLogin.Password}"/>
+		<s:RichText id="richtext2" d:userLabel="Username" includeIn="Login" x="273" y="366"
+					color="#b2b2b2" fontFamily="Verdana" fontSize="14" lineHeight="214.3%"
+					whiteSpaceCollapse="preserve">
+			<s:content><s:p><s:span>Username</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText id="richtext1" d:userLabel="Password" includeIn="Login" x="278" y="416"
+					color="#b2b2b2" fontFamily="Verdana" fontSize="14" lineHeight="214.3%"
+					whiteSpaceCollapse="preserve">
+			<s:content><s:p><s:span>Password</s:span></s:p></s:content>
+		</s:RichText>
+		<s:Button id="m_btnLogin" includeIn="Login" x="435" y="455" height="55" buttonMode="true"
+				  click="m_cLogin.HandleLogin(event)" skinClass="components.btn_Login"/>
+		<s:RichText id="richtext3" d:userLabel="Password dimenticata?" includeIn="Login" x="278"
+					y="542" width="343" color="#fefefe" fontFamily="Verdana" fontSize="12"
+					lineHeight="120%" text="@{m_mLogin.Status}" textAlign="center" whiteSpaceCollapse="preserve">			
+		</s:RichText>
+		
+	</fx:DesignLayer>	
+	<mx:ViewStack id="viewstack1" includeIn="Admin" x="41" y="156" width="939" height="434"
+				  borderColor="0x0000FF" borderVisible="true" borderStyle="solid">
+		<!-- VIEW MANAGER -->
+		<s:NavigatorContent width="100%" height="100%" label="Manager">
+			<s:Button id="m_btnFindManager" x="223" y="11" label="Find"/>
+			<s:TextInput id="m_tbManagerSearchName" x="91" y="10" contentBackgroundAlpha="0.5"/>
+			<s:Label x="21" y="16" color="#FCF5F5" text="Find User:"/>
+			<s:DataGrid x="21" y="49" width="908" height="306" requestedRowCount="4" >
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn dataField="UserName" headerText="UserName"></s:GridColumn>
+						<s:GridColumn dataField="Email" headerText="Email"></s:GridColumn>
+						<s:GridColumn dataField="LastLogin" headerText="Last Login"></s:GridColumn>
+						<s:GridColumn dataField="LastIP" headerText="Last IP"></s:GridColumn>
+						<s:GridColumn dataField="Location" headerText="Location"></s:GridColumn>
+					</s:ArrayList>
+				</s:columns>
+				<s:typicalItem>
+					<fx:Object dataField1="Sample Data" dataField2="Sample Data"
+							   dataField3="Sample Data"></fx:Object>
+				</s:typicalItem>
+				<s:ArrayList>
+					<fx:Object dataField1="data1" dataField2="data1" dataField3="data1"></fx:Object>
+					<fx:Object dataField1="data2" dataField2="data2" dataField3="data2"></fx:Object>
+					<fx:Object dataField1="data3" dataField2="data3" dataField3="data3"></fx:Object>
+					<fx:Object dataField1="data4" dataField2="data4" dataField3="data4"></fx:Object>
+				</s:ArrayList>
+			</s:DataGrid>
+			<s:Button id="m_btnAddManager" x="859" y="363" label="Add "/>
+			<s:Button id="m_btnDeleteManager" x="781" y="363" label="Delete"/>
+			<s:Button id="m_btnUpdateManager" x="701" y="363" label="Update"/>
+			<s:Button id="m_btnRefreshManager" x="20" y="363" label="Refresh"/>
+		</s:NavigatorContent>
+		<!-- VIEW USER -->
+		<s:NavigatorContent width="100%" height="100%" label="User">
+			<s:DataGrid id="m_listUserDetail" x="19" y="51" width="910" height="303"
+						requestedRowCount="4" dataProvider="{m_mAdmin.arrUser}" doubleClickEnabled="true"
+						selectedItem="@{m_mAdmin.oSelectedUser}" doubleClick="m_listUserDetail_doubleClickHandler(event)" >
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn dataField="UserName" headerText="UserName"></s:GridColumn>
+						<s:GridColumn dataField="DisplayName" headerText="DisplayName"></s:GridColumn>
+						<s:GridColumn dataField="Email" headerText="Email"></s:GridColumn>
+						<s:GridColumn dataField="Password" headerText="Password"></s:GridColumn>
+						<s:GridColumn dataField="Chip" headerText="Chip"></s:GridColumn>
+						<!--<s:GridColumn dataField="LastJoinedDate" headerText="Last Login"></s:GridColumn>
+						<s:GridColumn dataField="RegisterDate" headerText="Register"></s:GridColumn>-->						
+						<s:GridColumn dataField="TotalPlayedMatch" headerText="Played"></s:GridColumn>
+						<s:GridColumn dataField="TotalWinMatch" headerText="Win"></s:GridColumn>						
+						<s:GridColumn dataField="Location" headerText="Location"></s:GridColumn>
+					</s:ArrayList>
+				</s:columns>
+				
+				<!--<s:ArrayList>
+					<fx:Object UserName="user1" DisplayName="User Display" Email="user@gmail.com"
+							   Chip="$1000" LastJoinedDate="10/12/2012" RegisterDate="10/10/2012"
+							   TotalDeposit="$2000" TotalPlayedMatch="100" TotalWinMatch="50"
+							   TotalLostMatch="50" Location="USA"
+							   ></fx:Object>					
+				</s:ArrayList>-->
+			</s:DataGrid>
+			<s:Button id="m_btnFindUser" x="223" y="11" label="Find" click="m_btnFindUser_clickHandler(event)"/>
+			<s:TextInput id="m_tbUserSearchName" x="91" y="10" contentBackgroundAlpha="0.5" text="@{m_mAdmin.findUserName}" enter="m_cAdmin.findUser(m_mAdmin.findUserName)"/>
+			<s:Label x="21" y="16" color="#FCF5F5" text="Find User:"/>
+			<s:Button id="m_btnGetMoreUser" x="19" y="372" label="Get More" click="m_cAdmin.handleGetMoreUser()"/>
+			<s:Button id="m_btnRefresh" x="97" y="372" label="Refresh" click="m_cAdmin.handleGetListUser()"/>
+			<s:Button id="m_btnCreateUser" x="859" y="372" label="Create" click="m_cAdmin.handleCreateUser()"/>
+			<s:Button id="m_btnDeleteUser" x="780" y="372" label="Delete" click="m_cAdmin.handleDeleteUser()"/>
+			<s:Button id="m_btnUpdateUser" x="697" y="372" label="Update" click="m_cAdmin.handleUpdateUser()"/>
+			<s:RichText d:userLabel="Password dimenticata?" x="247" y="381" width="343"
+						color="#fefefe" fontFamily="Verdana" fontSize="12" lineHeight="120%"
+						text="@{m_mAdmin.StatusUser}" textAlign="center" whiteSpaceCollapse="preserve">			
+			</s:RichText>
+			<s:Button id="m_btnAddchip" x="614" y="372" label="Add chip" click="m_cAdmin.handleAddChip()"/>
+		</s:NavigatorContent>
+		<!-- VIEW ROOM -->
+		<s:NavigatorContent width="100%" height="100%" label="Hold'Em">
+			<s:DataGrid x="10" y="29" width="919" height="336" requestedRowCount="4" doubleClickEnabled="true"
+						dataProvider="{m_mAdmin.arrRoom}" 
+						selectedItem="@{m_mAdmin.oSelectedRoom}"
+						doubleClick="datagrid1_doubleClickHandler(event)">
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn dataField="Name" headerText="Name"></s:GridColumn>
+						<s:GridColumn dataField="DisplayName" headerText="DisplayName"></s:GridColumn>
+						<s:GridColumn dataField="Password" headerText="Password"></s:GridColumn>
+						<s:GridColumn dataField="maxUser" headerText="maxUser"></s:GridColumn>
+						<s:GridColumn dataField="betChip" headerText="betChip"></s:GridColumn>
+						<!--<s:GridColumn dataField="smallBlind" headerText="smallBlind"></s:GridColumn>
+						<s:GridColumn dataField="bigBlind" headerText="bigBlind"></s:GridColumn>-->
+						<s:GridColumn dataField="minBuyin" headerText="minBuyin"></s:GridColumn>
+						<s:GridColumn dataField="maxBuyin" headerText="maxBuyin"></s:GridColumn>
+						<s:GridColumn dataField="noLimit" headerText="noLimit"></s:GridColumn>
+						<s:GridColumn dataField="status" headerText="status"></s:GridColumn>
+						<s:GridColumn dataField="createBy" headerText="createBy"></s:GridColumn>
+					</s:ArrayList>
+				</s:columns>
+				<!--<s:typicalItem>
+					<fx:Object dataField1="Sample Data" dataField2="Sample Data"
+							   dataField3="Sample Data"></fx:Object>
+				</s:typicalItem>-->
+				<!--<s:ArrayList>
+					<fx:Object dataField1="data1" dataField2="data1" dataField3="data1"></fx:Object>
+					<fx:Object dataField1="data2" dataField2="data2" dataField3="data2"></fx:Object>
+					<fx:Object dataField1="data3" dataField2="data3" dataField3="data3"></fx:Object>
+					<fx:Object dataField1="data4" dataField2="data4" dataField3="data4"></fx:Object>
+				</s:ArrayList>-->
+			</s:DataGrid>
+			<s:Button id="m_btnGetMoreRoom" x="19" y="372" label="Get More" click="m_cAdmin.handleGetMoreRoom()"/>
+			<s:Button id="m_btnRefreshRoom" x="97" y="372" label="Refresh" click="m_cAdmin.handleGetListRoom()"/>
+			<s:Button id="m_btnCreateRoom" x="859" y="372" label="Create" click="m_cAdmin.handleCreateRoom()"/>
+			<s:Button id="m_btnDeleteRoom" x="780" y="372" label="Delete" click="m_cAdmin.handleDeleteRoom()"/>
+			<s:Button id="m_btnUpdateRoom" x="697" y="372" label="Update" click="m_cAdmin.handleUpdateRoom()"/>
+			<s:RichText d:userLabel="Password dimenticata?" x="247" y="381" width="343"
+						color="#fefefe" fontFamily="Verdana" fontSize="12" lineHeight="120%"
+						text="@{m_mAdmin.StatusRoom}" textAlign="center" whiteSpaceCollapse="preserve">			
+			</s:RichText>
+		</s:NavigatorContent>
+		<!-- VIEW TOURNAMENT -->
+		<s:NavigatorContent width="100%" height="100%" label="Sit&amp;Go">
+			<s:DataGrid x="10" y="29" width="919" height="336" requestedRowCount="4" doubleClickEnabled="true" 
+						dataProvider="{m_mAdmin.arrTournament}"
+						selectedItem="@{m_mAdmin.oSelectedTour}"
+						click="datagrid2_clickHandler(event)"
+						doubleClick="datagrid2_doubleClickHandler(event)">
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn dataField="name" headerText="Name"></s:GridColumn>
+						<s:GridColumn dataField="displayName" headerText="displayName"></s:GridColumn>
+						<s:GridColumn dataField="fee" headerText="Fee"></s:GridColumn>
+						<s:GridColumn dataField="capacity" headerText="Capacity"></s:GridColumn>
+						<s:GridColumn dataField="status" headerText="Status"></s:GridColumn>
+						<s:GridColumn dataField="startingChip" headerText="StartingChip"></s:GridColumn>
+						<s:GridColumn dataField="levelTypeDes" headerText="level Type"></s:GridColumn>
+						<s:GridColumn dataField="beginLevel" headerText="begin Level"></s:GridColumn>
+						<s:GridColumn dataField="endLevel" headerText="end Level"></s:GridColumn>
+						<s:GridColumn dataField="firstPrize" headerText="FirstPrize"></s:GridColumn>
+						<s:GridColumn dataField="secondPrize" headerText="SecondPrize"></s:GridColumn>
+						<s:GridColumn dataField="thirdPrize" headerText="ThirdPrize"></s:GridColumn>
+					</s:ArrayList>
+				</s:columns>
+			</s:DataGrid>
+			<s:Button id="m_btnGetMoreTournament" x="19" y="372" label="Get More" click="m_cAdmin.handleGetMoreTour()"/>
+			<s:Button id="m_btnRefreshTournament" x="97" y="372" label="Refresh" click="m_cAdmin.handleGetListTournament()"/>
+			<s:Button id="m_btnCreateTournament" x="859" y="372" label="Create" click="m_cAdmin.handleCreateTour()"/>
+			<s:Button id="m_btnDeleteTournament" x="780" y="372" label="Delete" click="m_cAdmin.handleDeleteTour()"/>
+			<s:Button id="m_btnUpdateTournament" x="697" y="372" label="Update" click="m_cAdmin.handleUpdateTour()"/>
+			<s:Button id="m_btnActiveTournament" x="620" y="372" label="Active" click="m_cAdmin.handleActiveTour()" visible="false"/>
+			<s:RichText d:userLabel="Password dimenticata?" x="210" y="377" width="343"
+						color="#fefefe" fontFamily="Verdana" fontSize="12" lineHeight="120%"
+						text="@{m_mAdmin.StatusTournament}" textAlign="center" whiteSpaceCollapse="preserve">			
+			</s:RichText>
+		</s:NavigatorContent>
+		<!-- VIEW LEVEL -->
+		<s:NavigatorContent width="100%" height="100%" label="Level">
+			<s:DataGrid x="10" y="29" width="919" height="336" requestedRowCount="4" doubleClickEnabled="true" 
+						dataProvider="{m_mAdmin.arrLevel}"
+						selectedItem="@{m_mAdmin.oSelectedLevel}"
+						doubleClick="datagrid3_doubleClickHandler(event)">
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn dataField="level" headerText="level"></s:GridColumn>
+						<s:GridColumn dataField="smallBlind" headerText="smallBlind"></s:GridColumn>
+						<s:GridColumn dataField="bigBlind" headerText="bigBlind"></s:GridColumn>
+						<s:GridColumn dataField="ante" headerText="ante"></s:GridColumn>
+						<s:GridColumn dataField="timeLife" headerText="timeLife(m)"></s:GridColumn>
+					</s:ArrayList>
+				</s:columns>
+			</s:DataGrid>
+			<s:Button id="m_btnGetMoreLevel" x="19" y="372" label="Get More" click="m_cAdmin.handleGetMoreLevel()"/>
+			<s:Button id="m_btnRefreshLevel" x="97" y="372" label="Refresh" click="m_cAdmin.handleGetListLevel()"/>
+			<s:Button id="m_btnCreateLevel" x="859" y="372" label="Create" click="m_cAdmin.handleCreateLevel()"/>
+			<s:Button id="m_btnDeleteLevel" x="780" y="372" label="Delete" click="m_cAdmin.handleDeleteLevel()"/>
+			<s:Button id="m_btnUpdateLevel" x="697" y="372" label="Update" click="m_cAdmin.handleUpdateLevel()"/>
+			<s:RichText d:userLabel="Password dimenticata?" x="210" y="377" width="343"
+						color="#fefefe" fontFamily="Verdana" fontSize="12" lineHeight="120%"
+						text="@{m_mAdmin.StatusLevel}" textAlign="center" whiteSpaceCollapse="preserve">			
+			</s:RichText>
+			<s:DropDownList x="107" y="4" width="178" dataProvider="{m_mAdmin.arrLevelCollection}"
+							selectedItem="@{m_mAdmin.oSelectedLevelCollection}" change="dropdownlist1_changeHandler(event)"/>
+			<s:Label x="27" y="10" color="#FCF5F5" fontSize="12" text="Level type:"/>
+		</s:NavigatorContent>
+		<!-- VIEW REPORT -->
+		<s:NavigatorContent width="100%" height="100%" label="Report">
+			<s:DataGrid x="10" y="29" width="919" height="336" requestedRowCount="4" doubleClickEnabled="true" 
+						dataProvider="{m_mAdmin.arrTransaction}"
+						selectedItem="@{m_mAdmin.oSelectedTrans}">
+				<s:columns>
+					<s:ArrayList>
+						<s:GridColumn dataField="userName" headerText="User name"></s:GridColumn>
+						<s:GridColumn dataField="byAdmin" headerText="By admin"></s:GridColumn>
+						<s:GridColumn dataField="type" headerText="Type"></s:GridColumn>
+						<s:GridColumn dataField="amount" headerText="Amount"></s:GridColumn>
+						<s:GridColumn dataField="date" headerText="Date"></s:GridColumn>
+					</s:ArrayList>
+				</s:columns>
+			</s:DataGrid>
+			<s:Button id="m_btnGetMoreTrans" x="19" y="372" label="Get More" click="m_cAdmin.handleGetMoreTrans()"/>
+			<s:Button id="m_btnRefreshTrans" x="97" y="372" label="Refresh" click="m_cAdmin.handleGetTransaction()"/>
+			<s:Button id="m_btnDeleteTrans" x="780" y="372" label="Delete" click=""/>
+		</s:NavigatorContent>
+	</mx:ViewStack>
+	<s:TabBar id="m_tbAdmin" includeIn="Admin" x="41" y="132" width="451" change="m_tbAdmin_changeHandler(event)"
+			  dataProvider="{viewstack1}" skinClass="AdminTabBar"/>
+	<s:Button id="m_btnLogout" includeIn="Admin" x="898" y="132" label="Logout" click="m_cLogin.logout()"/>
+
+
+	
+</s:Application>
+

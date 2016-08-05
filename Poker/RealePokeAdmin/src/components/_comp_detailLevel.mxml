@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		 xmlns:fc="http://ns.adobe.com/flashcatalyst/2009" width="356" height="309"
+		 implements="mx.managers.IFocusManagerContainer">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import controller.C_DetailLevel;
+			
+			import model.M_DetailLevel;
+			
+			import mx.core.IFlexDisplayObject;
+			import mx.events.FlexEvent;
+			
+			[Bindable]
+			private var m_mDetailLevel:M_DetailLevel = M_DetailLevel.getInstance();
+			
+			private var m_cDetailLevel:C_DetailLevel = new C_DetailLevel();
+			
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				if(m_mDetailLevel.isCreate)
+					m_cDetailLevel.handleCreate();
+				else
+					m_cDetailLevel.handleUpdate();
+			}
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				m_cDetailLevel.hideLevelDetailBox();
+			}
+			
+			public function get defaultButton():IFlexDisplayObject
+			{
+				// TODO Auto Generated method stub
+				return null;
+			}
+			
+			public function set defaultButton(value:IFlexDisplayObject):void
+			{
+				// TODO Auto Generated method stub
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:DesignLayer d:userLabel="Layer 1">
+		<s:BitmapImage d:userLabel="Shape 14" x="1" y="1" d:locked="true" smooth="true"
+					   source="@Embed('/assets/images/box_jointable/Shape 14.png')"/>
+		<s:RichText d:userLabel="JOIN TABLE" textAlign="center" whiteSpaceCollapse="preserve" fontWeight="bold" fontFamily="Arial" color="#c6ff00" fontSize="18" lineHeight="120%" trackingRight="1%" kerning="off" x="121" y="15">
+			<s:content><s:p><s:span>DETAIL</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Level :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="111" y="63">
+			<s:content><s:p><s:span>Level :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Level type :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="79" y="94">
+			<s:content><s:p><s:span>Level type :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Small blind :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="75" y="126">
+			<s:content><s:p><s:span>Small blind :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Big blind :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="90" y="156">
+			<s:content><s:p><s:span>Big blind :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Ante :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="115" y="186">
+			<s:content><s:p><s:span>Ante :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Time life(m) :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="67" y="216">
+			<s:content><s:p><s:span>Time life(m) :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:TextInput x="171" y="60" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailLevel.level}" tabIndex="1"/>
+		<s:TextInput x="171" y="90" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailLevel.levelTypeDes}" enabled="false" tabIndex="2"/>
+		<s:TextInput x="171" y="120" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailLevel.smallBlind}" tabIndex="3"/>
+		<s:TextInput x="171" y="150" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailLevel.bigBlind}" tabIndex="4"/>
+		<s:TextInput x="171" y="181" enabled="true" restrict="0-9" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailLevel.ante}" tabIndex="5"/>
+		<s:TextInput x="171" y="211" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailLevel.timeLife}" tabIndex="6"/>
+		<s:Button x="98" y="267" label="   Ok" 
+				  skinClass="components.btn_Cancel" click="button1_clickHandler(event)" tabIndex="7"/>
+		<s:Button x="187" y="267" label="Cancel" 
+				  skinClass="components.btn_Cancel" click="button2_clickHandler(event)" tabIndex="8"/>
+	</fx:DesignLayer>
+	<s:RichText id="richtext3" d:userLabel="Password dimenticata?" x="7" y="247" width="343"
+				color="#fefefe" fontFamily="Verdana" fontSize="12" lineHeight="120%"
+				text="@{m_mDetailLevel.status}" textAlign="center" whiteSpaceCollapse="preserve">			
+	</s:RichText>
+	
+</s:Group>
+
+

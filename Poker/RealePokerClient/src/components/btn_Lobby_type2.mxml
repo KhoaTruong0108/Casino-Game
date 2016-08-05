@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="173" height="55">
+	<fx:Metadata>[HostComponent("spark.components.Button")]</fx:Metadata>
+	<s:states>
+		<s:State name="up"/>
+		<s:State name="over"/>
+		<s:State name="down"/>
+		<s:State name="disabled"/>
+	</s:states>
+	<s:BitmapImage d:userLabel="Shape 12's Outer Glow" x="0" y="0" blendMode="screen" smooth="true"
+				   source="@Embed('/assets/images/lobby/Shape 12_s Outer Glow.png')"
+				   visible.disabled="false"
+				   visible.up="false"/>
+	<s:BitmapImage d:userLabel="Shape 12's Outer Stroke" x="5" y="5" smooth="true"
+				   source="@Embed('/assets/images/lobby/Shape 12_s Outer Stroke.png')"
+				   alpha.disabled="0.5"
+				   visible.down="false"
+				   visible.over="false"/>
+	<s:BitmapImage d:userLabel="Shape 12" x="6" y="6" smooth="true"
+				   source="@Embed('/assets/images/lobby/Shape 12.png')"
+				   alpha.disabled="0.5"
+				   visible.down="false"/>
+	<s:BitmapImage d:userLabel="Shape 12 copy" x="6" y="6" smooth="true"
+				   source="@Embed('/assets/images/lobby/Shape 12 copy.png')"
+				   visible.disabled="false"
+				   visible.over="false"
+				   visible.up="false"/>
+	<s:RichText d:userLabel="JOIN" x="53" y="18" color="#ffffff" fontFamily="Verdana" fontSize="24"
+				fontWeight="bold" lineHeight="120%" whiteSpaceCollapse="preserve"
+				alpha.disabled="0.5" tabStops.disabled="S0 S50" text.disabled="JOIN">
+		<s:content.over><s:p><s:span>JOIN</s:span></s:p></s:content.over>
+		<s:content.down><s:p><s:span>JOIN</s:span></s:p></s:content.down>
+		<s:content.up><s:p><s:span>JOIN</s:span></s:p></s:content.up>
+	</s:RichText>
+</s:Skin>

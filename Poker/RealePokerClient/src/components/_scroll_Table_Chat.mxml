@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="9" height="85">
+	<fx:Metadata>[HostComponent("spark.components.VScrollBar")]</fx:Metadata>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="disabled"/>
+		<s:State name="inactive"/>
+	</s:states>
+	<s:Button id="track" x="4" y="4" skinClass="components._scroll_Table_ChatTrackSkin"/>
+	<s:Button id="incrementButton" x="0" y="80"
+			  skinClass="components._scroll_Table_ChatDownButtonSkin"
+			  buttonMode.normal="true"/>
+	<s:Button id="decrementButton" x="0" y="0" skinClass="components._scroll_Table_ChatUpButtonSkin"
+			  buttonMode.normal="true"/>
+	<s:Button id="thumb" x="0" y="29" skinClass="components._scroll_Table_ChatThumbSkin"
+			  buttonMode.normal="true"/>
+</s:Skin>

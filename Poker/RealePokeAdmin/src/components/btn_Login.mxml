@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="130" height="43">
+	<fx:Metadata>[HostComponent("spark.components.Button")]</fx:Metadata>
+	<s:states>
+		<s:State name="up"/>
+		<s:State name="over"/>
+		<s:State name="down"/>
+		<s:State name="disabled"/>
+	</s:states>
+	
+	<s:BitmapImage d:userLabel="Shape 2's Outer Stroke" x="1" y="1" smooth="true"
+				   source="@Embed('/assets/images/login/Shape 2_s Outer Stroke.png')"/>
+	<s:BitmapImage d:userLabel="Shape 2" visible="false" x="2" y="2" smooth="true"
+				   source="@Embed('/assets/images/login/Shape 2.png')">
+		<s:mask>
+			<s:Group x="0" y="0">
+				<s:Path winding="evenOdd" data="M 10 -0.05 L 112.65 -0.05 C 118.15 -0.05 122.65 4.4 122.65 9.9 L 122.65 28.1 C 122.65 33.65 118.15 38.1 112.65 38.1 L 10 38.1 C 4.45 38.1 0 33.65 0 28.1 L 0 9.9 C 0 4.4 4.45 -0.05 10 -0.05">
+					<s:fill>
+						<s:SolidColor color="#ff0000"/>
+					</s:fill>
+				</s:Path>
+			</s:Group>
+		</s:mask>
+	</s:BitmapImage>
+	<s:BitmapImage d:userLabel="Shape 2 copy" x="2" y="2" smooth="true"
+				   source="@Embed('/assets/images/login/Shape 2 copy.png')"/>
+	<s:RichText d:userLabel="ENTRA" x="29" y="15" color="#ffffff" fontFamily="Verdana" fontSize="18"
+				fontWeight="bold" lineHeight="120%" whiteSpaceCollapse="preserve"
+				color.disabled="#C6C5C5"
+				color.over="#EEF757">
+		<s:content><s:p><s:span>LOGIN</s:span></s:p></s:content>
+	</s:RichText>
+</s:Skin>

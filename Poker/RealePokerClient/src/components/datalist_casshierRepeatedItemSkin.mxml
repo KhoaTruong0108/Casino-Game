@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+				width="940" height="38" autoDrawBackground="false">
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="hovered"/>
+		<s:State name="selected"/>
+	</s:states>
+	<s:BitmapImage d:userLabel="Shape 11" x="0" y="0" width="940" smooth="true"
+				   source="@Embed('/assets/images/lobby/Shape 11.png')">
+		<s:mask>
+			<s:Group x="0" y="0">
+				<s:Path x="0" y="0" width="938.88" height="37.2"
+						data="M 0.15 0.4 L 964 0.4 L 964 37.6 L 0.15 37.6 L 0.15 0.4"
+						winding="evenOdd">
+					<s:fill>
+						<s:SolidColor color="#ff0000"/>
+					</s:fill>
+				</s:Path>
+			</s:Group>
+		</s:mask>
+	</s:BitmapImage>
+	<s:RichText d:userLabel="1 _ 1 _ 2011" x="78" y="13" color="#ffffff" fontFamily="Verdana"
+				fontSize="14" lineHeight="120%" text="{data.date}" whiteSpaceCollapse="preserve"
+				x.normal="10" width.normal="227" textAlign.normal="center">
+	</s:RichText>
+	<s:RichText d:userLabel="200,000" x="245" y="13" width="229" color="#ffffff" fontFamily="Verdana"
+				fontSize="14" lineHeight="120%" text="{data.type}" textAlign="center"
+				whiteSpaceCollapse="preserve">
+	</s:RichText>
+	<s:RichText d:userLabel="Withdraw" x="491" y="14" width="223" color="#ffffff"
+				fontFamily="Verdana" fontSize="14" lineHeight="120%" text="{data.amount}"
+				textAlign="center" whiteSpaceCollapse="preserve">
+	</s:RichText>
+	<s:RichText d:userLabel="Success" x="742" y="13" width="188" color="#ffffff" fontFamily="Verdana"
+				fontSize="14" lineHeight="120%" text="{data.byAdmin}" textAlign="center"
+				whiteSpaceCollapse="preserve">
+	</s:RichText>
+	<s:Rect d:userLabel="Item Highlight Rectangle" width="940" height="38"
+			alpha.hovered="0.3"
+			alpha.normal="0"
+			alpha.selected="0.5">
+		<s:fill>
+			<s:SolidColor color="0xCED7EE"/>
+		</s:fill>
+	</s:Rect>
+</s:ItemRenderer>

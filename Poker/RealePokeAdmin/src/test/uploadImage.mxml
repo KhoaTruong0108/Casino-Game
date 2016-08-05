@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			//protected var m_address: String = "/assets/images/RasterizedItems.jpg";
+			
+			protected	var fileRef:FileReference = new FileReference();
+			
+			protected function m_btnUpload_clickHandler(event:MouseEvent):void
+			{
+				var request:URLRequest = new URLRequest("http://localhost:8008/uploadfile");
+				fileRef.addEventListener("result", onCompleteHandler);
+				try
+				{
+					fileRef.upload(request);
+				}
+				catch (error:Error)
+				{
+					m_output.text = "Unable to upload file.";
+				}
+			}
+			
+			protected function m_btnBrowse_clickHandler(event:MouseEvent):void
+			{
+				var success:Boolean = fileRef.browse();
+			}
+			
+			protected function onCompleteHandler(event:Event):void
+			{
+				m_output.text = "uploaded";
+			}
+		]]>
+	</fx:Script>
+	<s:TextArea id="m_output" x="131" y="112" width="378" height="249"/>
+	<s:Button id="m_btnUpload" x="395" y="392" label="upload" click="m_btnUpload_clickHandler(event)"/>
+	<s:RichText id="m_lblFileAddress" x="153" y="369" width="327" text=""/>
+	<s:Button id="m_btnBrowse" x="261" y="392" label="Browse" click="m_btnBrowse_clickHandler(event)"/>
+</s:Application>

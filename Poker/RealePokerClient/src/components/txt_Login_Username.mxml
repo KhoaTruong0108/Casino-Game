@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		width="243" height="53">
+	<fx:Metadata>[HostComponent("spark.components.TextInput")]</fx:Metadata>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="disabled"/>
+		<s:State name="normalWithPrompt"/>
+		<s:State name="disabledWithPrompt"/>
+	</s:states>
+	<s:BitmapImage x="0" y="0" smooth="true"
+				   source="@Embed('/assets/images/RasterizedItems2.png')"/>
+	<s:RichText id="promptDisplay" includeIn="disabledWithPrompt,normalWithPrompt" x="5" y="5" fontFamily="Arial"/>
+	<s:RichEditableText id="textDisplay" x="23" y="19" width="194" height="21" fontFamily="Arial"
+						heightInLines="1"/>
+</s:Skin>

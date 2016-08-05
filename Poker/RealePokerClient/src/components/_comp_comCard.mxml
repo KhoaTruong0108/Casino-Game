@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:fc="http://ns.adobe.com/flashcatalyst/2009" width="360" height="97">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.greensock.TweenMax;
+			
+			import zUtilities.Resource;
+			import zUtilities.SoundController;
+			[Bindable]
+			private var m_card1:Object;
+			[Bindable]
+			private var m_card2:Object;
+			[Bindable]
+			private var m_card3:Object;
+			[Bindable]
+			private var m_card4:Object;
+			[Bindable]
+			private var m_card5:Object;
+			
+			private var m_cardSource:Resource = Resource.getInstance();
+			
+			public function set3ComCard(card1:String, card2:String, card3:String):void{
+				dealCard(0, m_card_1, card1, 0);
+				dealCard(75, m_card_2, card2, 0.2);
+				dealCard(150, m_card_3, card3, 0.4);
+			}
+			
+			public function setComCard4th(card4:String):void{
+				dealCard(225, m_card_4, card4, 0);
+			}
+			
+			public function setComCard5th(card5:String):void{
+				dealCard(300, m_card_5, card5, 0);
+			}
+			
+			public function set5ComCard(card1:String, card2:String, card3:String, card4:String, card5:String):void{
+				dealCard(0, m_card_1, card1, 0);
+				dealCard(75, m_card_2, card2, 0.2);
+				dealCard(150, m_card_3, card3, 0.4);
+				dealCard(225, m_card_4, card4, 1);
+				dealCard(300, m_card_5, card5, 1.5);
+			}
+			
+			public function set2LastComCard(card4:String, card5:String):void{
+				dealCard(225, m_card_4, card4, 0);
+				dealCard(300, m_card_5, card5, 1);
+			}
+			
+			public function clearComCard():void{
+				m_card_1.source = null;
+				m_card_2.source = null;
+				m_card_3.source = null;
+				m_card_4.source = null;
+				m_card_5.source = null;
+			}
+			
+			public function userBet(status:String):void{				
+				/* lb.text = status;
+				lb.y = 0;
+				lb.alpha = 1;
+				TweenMax.to(lb, 3, {y:-130, alpha:0.2});
+				TweenMax.delayedCall(3, function():void{
+					lb.alpha = 0;					
+				}); */
+			}
+			
+			private function dealCard(x:int, card:Image, cardSource:String, delay:Number):void{
+				card.x = 495 - this.x;
+				card.y = 160 - this.y;
+				card.width = 0.6;
+				card.height = 0.86;
+				card.source = m_cardSource.getImg(cardSource);
+				TweenMax.to(card, 0.4, {x:x, y:0, scaleX:100, scaleY:100, delay:delay});
+				
+				SoundController.playSound("deal_card");
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Image id="m_card_1" x="0" y="0" width="60" height="86" source="{m_card1}"/>
+	<s:Image id="m_card_2" x="75" y="0" width="60" height="86" source="{m_card2}"/>
+	<s:Image id="m_card_3" x="150" y="0" width="60" height="86" source="{m_card3}"/>
+	<s:Image id="m_card_4" x="225" y="0" width="60" height="86" source="{m_card4}"/>
+	<s:Image id="m_card_5" x="300" y="0" width="60" height="86" source="{m_card5}"/>
+	<!--<s:Label id="lb" x="0" y="0" alpha="0" width="312" height="64" color="#A7FC02" fontFamily="Verdana"
+			 fontSize="32" fontWeight="bold" text="" textAlign="center" verticalAlign="middle"/>-->
+</s:Group>

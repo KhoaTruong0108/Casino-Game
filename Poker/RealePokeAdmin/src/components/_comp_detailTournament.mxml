@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		 xmlns:fc="http://ns.adobe.com/flashcatalyst/2009" width="346" height="403"
+		 implements="mx.managers.IFocusManagerContainer">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import controller.C_DetailTournament;
+			
+			import model.M_DetailTournament;
+			
+			import mx.core.IFlexDisplayObject;
+			import mx.events.FlexEvent;
+			import mx.managers.ISystemManager;
+			
+			import spark.events.IndexChangeEvent;
+			
+			[Bindable]
+			private var m_mDetailTournament:M_DetailTournament = M_DetailTournament.getInstance();
+			
+			private var m_cDetailTournament:C_DetailTournament = new C_DetailTournament();
+			
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				if(m_mDetailTournament.isCreate)
+					m_cDetailTournament.handleCreate();
+				else
+					m_cDetailTournament.handleUpdate();
+			}
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				m_cDetailTournament.hideTourDetailBox();
+			}
+			
+			protected function dropdownlist2_changeHandler(event:IndexChangeEvent):void
+			{
+				if(m_mDetailTournament.oSelectedLevelCollection != null){
+					m_mDetailTournament.levelType = m_mDetailTournament.oSelectedLevelCollection.data as int;
+				}
+			}
+			
+			public function get defaultButton():IFlexDisplayObject
+			{
+				// TODO Auto Generated method stub
+				return null;
+			}
+			
+			public function set defaultButton(value:IFlexDisplayObject):void
+			{
+				// TODO Auto Generated method stub
+				
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<fx:DesignLayer d:userLabel="Layer 1">
+		<s:BitmapImage d:userLabel="Shape 14" x="1" y="1" d:locked="true" smooth="true"
+					   source="@Embed('/assets/images/box_jointable/BG_big.png')"/>
+		<s:RichText d:userLabel="JOIN TABLE" textAlign="center" whiteSpaceCollapse="preserve" fontWeight="bold" fontFamily="Arial" color="#c6ff00" fontSize="18" lineHeight="120%" trackingRight="1%" kerning="off" x="132" y="15">
+			<s:content><s:p><s:span>DETAIL</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Table Name :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="98" y="58">
+			<s:content><s:p><s:span>Name :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Display name :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="50" y="85">
+			<s:content><s:p><s:span>Display name :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Fee :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="108" y="149">
+			<s:content><s:p><s:span>Fee :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Capacity :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="81" y="120">
+			<s:content><s:p><s:span>Capacity :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="level type :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="72" y="212">
+			<s:content><s:p><s:span>level type :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="First prize :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="21" y="287">
+			<s:content><s:p><s:span>1st :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Second prize :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="124" y="287">
+			<s:content><s:p><s:span>2nd :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Third prize :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="230" y="287">
+			<s:content><s:p><s:span>3rd :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:TextInput x="154" y="54" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailTournament.name}" tabIndex="1"/>
+		<s:TextInput x="154" y="85" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailTournament.displayName}" tabIndex="2"/>
+		<s:TextInput x="154" y="116" restrict="0-9" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailTournament.capacity}" tabIndex="3"/>
+		<s:TextInput x="154" y="147" restrict="0-9" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailTournament.fee}" tabIndex="4"/>
+		<s:RichText d:userLabel="starting chip :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="54" y="180">
+			<s:content><s:p><s:span>Starting chip :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:TextInput x="153" y="178" restrict="0-9" skinClass="components.txt_Buy_in"
+					 text="@{m_mDetailTournament.startingChip}" tabIndex="5"/>
+		<s:DropDownList id="m_ckbLevelType" x="152" y="209" width="160"
+						change="dropdownlist2_changeHandler(event)"
+						dataProvider="{m_mDetailTournament.arrLevelCollection}" selectedIndex="0"
+						selectedItem="@{m_mDetailTournament.oSelectedLevelCollection}" tabIndex="5"/>
+		<s:TextInput x="154" y="240" restrict="0-9" skinClass="components.comp_textBox_small"
+					 text="@{m_mDetailTournament.beginLevel}" tabIndex="6"/>
+		<s:TextInput x="230" y="241" restrict="0-9" skinClass="components.comp_textBox_small"
+					 text="@{m_mDetailTournament.endLevel}"  tabIndex="7"/>
+		<s:TextInput x="53" y="282" restrict="0-9" skinClass="components.comp_textBox_small"
+					 text="@{m_mDetailTournament.firstPrize}" tabIndex="8"/>
+		<s:TextInput x="165" y="282" restrict="0-9" skinClass="components.comp_textBox_small"
+					 text="@{m_mDetailTournament.secondPrize}" tabIndex="9"/>
+		<s:TextInput x="268" y="282" restrict="0-9" skinClass="components.comp_textBox_small"
+					 text="@{m_mDetailTournament.thirdPrize}"  tabIndex="10"/>
+		<s:Button x="98" y="359" label="   Ok" 
+				  skinClass="components.btn_Cancel" click="button1_clickHandler(event)" tabIndex="11"/>
+		<s:Button x="176" y="359" label="Cancel" 
+				  skinClass="components.btn_Cancel" click="button2_clickHandler(event)" tabIndex="12"/>
+	</fx:DesignLayer>
+	<s:RichText id="richtext3" d:userLabel="Password dimenticata?" x="-3" y="320" width="343"
+				color="#fefefe" fontFamily="Verdana" fontSize="12" lineHeight="120%"
+				text="@{m_mDetailTournament.statusMsg}" textAlign="center" whiteSpaceCollapse="preserve">			
+	</s:RichText>
+	<s:RichText d:userLabel="level min/max :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="44" y="246">
+		<s:content><s:p><s:span>level min/max :</s:span></s:p></s:content>
+	</s:RichText>
+	<s:RichText d:userLabel="/ " x="209" y="245" width="15" color="#ffffff" fontFamily="Arial"
+				fontSize="14" kerning="off" lineHeight="120%" textAlign="center" trackingRight="1%"
+				whiteSpaceCollapse="preserve">
+		<s:content><s:p><s:span>/ </s:span></s:p></s:content>
+	</s:RichText>
+	
+	
+	
+</s:Group>
+
+

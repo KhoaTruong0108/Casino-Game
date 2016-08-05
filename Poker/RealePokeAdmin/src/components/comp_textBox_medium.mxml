@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="95" height="23">
+	<fx:Metadata>[HostComponent("spark.components.TextInput")]</fx:Metadata>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="disabled"/>
+		<s:State name="normalWithPrompt"/>
+		<s:State name="disabledWithPrompt"/>
+	</s:states>
+	<s:BitmapImage d:userLabel="Shape 15" x="0" y="0" alpha="0.57" smooth="true"
+				   source="@Embed('/assets/images/box_jointable/Shape 15.png')"
+				   width="95">
+		<s:mask>
+			<s:Group x="0" y="0">
+				<s:Path winding="evenOdd" data="M 4.95 0 L 151.95 0 C 154.75 0 156.95 2.2 156.95 4.95 L 156.95 17.95 C 156.95 20.75 154.75 22.95 151.95 22.95 L 4.95 22.95 C 2.2 22.95 0 20.75 0 17.95 L 0 4.95 C 0 2.2 2.2 0 4.95 0">
+					<s:fill>
+						<s:SolidColor color="#ff0000"/>
+					</s:fill>
+				</s:Path>
+			</s:Group>
+		</s:mask>
+	</s:BitmapImage>
+	<s:RichText id="promptDisplay" includeIn="disabledWithPrompt,normalWithPrompt" x="5" y="5" fontFamily="Arial"/>
+	<s:RichEditableText id="textDisplay" x="5" y="5" width="95" fontFamily="Arial" heightInLines="1"
+						width.normal="80" height.normal="16" color.normal="#FDFF00"
+						tabStops.normal="S0 S50 S100"/>
+</s:Skin>

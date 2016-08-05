@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+				width="929" height="38" autoDrawBackground="false">
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="hovered"/>
+		<s:State name="selected"/>
+	</s:states>
+	<s:BitmapImage d:userLabel="Shape 11" x="0" y="0" width="929" smooth="true"
+				   source="@Embed('/assets/images/lobby/Shape 11.png')">
+		<s:mask>
+			<s:Group x="0" y="0">
+				<s:Path x="0" y="0" width="928.506" height="37.2"
+						data="M 0.15 0.4 L 940.65 0.4 L 940.65 37.6 L 0.15 37.6 L 0.15 0.4"
+						winding="evenOdd">
+					<s:fill>
+						<s:SolidColor color="#ff0000"/>
+					</s:fill>
+				</s:Path>
+			</s:Group>
+		</s:mask>
+	</s:BitmapImage>
+	<s:RichText d:userLabel="New York" x="10" y="14" width="123" color="#ffffff" fontFamily="Verdana"
+				fontSize="14" lineHeight="120%" text="{data.displayName}" textAlign="center"
+				whiteSpaceCollapse="preserve">
+	</s:RichText>
+	<s:RichText d:userLabel="$100_200" x="154" y="13" width="142" color="#ffffff"
+				fontFamily="Verdana" fontSize="14" lineHeight="120%" text="{data.fee}"
+				textAlign="center" whiteSpaceCollapse="preserve">
+	</s:RichText>
+	<!--<s:RichText d:userLabel="0_10" x="316" y="13" width="149" color="#ffffff" fontFamily="Verdana"
+				fontSize="14" lineHeight="120%" text="{data.playerCount}/{data.capacity}" textAlign="center"
+				whiteSpaceCollapse="preserve">
+	</s:RichText>-->
+	<s:RichText d:userLabel="0_10" x="316" y="13" width="149" color="#ffffff" fontFamily="Verdana"
+				fontSize="14" lineHeight="120%" text="{data.playerCount}/{data.capacity}" textAlign="center"
+				whiteSpaceCollapse="preserve">
+	</s:RichText>
+	<s:RichText d:userLabel="$ 2M" x="534" y="13" color="#ffffff" fontFamily="Verdana" fontSize="14"
+				lineHeight="120%" text="{data.status}" whiteSpaceCollapse="preserve"
+				textAlign.normal="center">
+	</s:RichText>
+	<s:RichText d:userLabel="$ 5M" x="644" y="13" width="134" color="#ffffff" fontFamily="Verdana"
+				fontSize="14" lineHeight="120%" text="{data.stakes}" textAlign="center"
+				whiteSpaceCollapse="preserve">
+	</s:RichText>
+	<s:RichText d:userLabel="Waiting" x="798" y="12" width="121" color="#ffffff" fontFamily="Verdana"
+				fontSize="14" lineHeight="120%" text="{data.prizes}" textAlign="center"
+				whiteSpaceCollapse="preserve">
+	</s:RichText>
+	<s:Rect d:userLabel="Item Highlight Rectangle" width="929" height="38"
+			alpha.hovered="0.3"
+			alpha.normal="0"
+			alpha.selected="0.5">
+		<s:fill>
+			<s:SolidColor color="0xCED7EE"/>
+		</s:fill>
+	</s:Rect>
+</s:ItemRenderer>

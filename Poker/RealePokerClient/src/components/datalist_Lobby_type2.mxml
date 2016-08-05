@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="947" height="239">
+	<fx:Metadata>[HostComponent("spark.components.List")]</fx:Metadata>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="disabled"/>
+	</s:states>
+	<s:DataGroup id="dataGroup" x="0" y="1" width="947" height="237" clipAndEnableScrolling="true"
+				 itemRenderer="components.datalist_Lobby_type2RepeatedItemSkin"
+				 width.normal="933" height.normal="227">
+		<s:layout>
+			<s:VerticalLayout/>
+		</s:layout>
+	</s:DataGroup>
+	<s:VScrollBar x="934" y="0" fixedThumbSize="true" skinClass="components._scroll_Lobby_type2"
+				  viewport="{dataGroup}"/>
+</s:Skin>

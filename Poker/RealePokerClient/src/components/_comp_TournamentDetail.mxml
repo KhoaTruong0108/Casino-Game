@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		 creationComplete="group1_creationCompleteHandler(event)"
+		 xmlns:fc="http://ns.adobe.com/flashcatalyst/2009" width="356" height="309">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import controller.C_TournamentDetail;
+			
+			import model.M_TournamentDetail;
+			
+			import mx.events.FlexEvent;
+			
+			[Bindable]
+			private var m_mTounamentDetail:M_TournamentDetail = M_TournamentDetail.getInstance();
+			
+			private var m_cTournamentDetail:C_TournamentDetail = C_TournamentDetail.getInstance();
+			
+			protected function group1_creationCompleteHandler(event:FlexEvent):void
+			{
+				//m_txtBuyIn.setFocus();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:DesignLayer d:userLabel="Layer 1">
+		<s:BitmapImage d:userLabel="Shape 14" x="1" y="1" d:locked="true" smooth="true"
+					   source="@Embed('/assets/images/box_jointable/Shape 14.png')"/>
+		<s:RichText d:userLabel="TOURNAMENT DETAIL" textAlign="center" whiteSpaceCollapse="preserve" fontWeight="bold" fontFamily="Arial" color="#c6ff00" fontSize="18" lineHeight="120%" trackingRight="1%" kerning="off" x="86" y="27">
+			<s:content><s:p><s:span>TOURNAMENT DETAIL</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="Name :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="86" y="64">
+			<s:content><s:p><s:span>Name :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="New York" textAlign="center" whiteSpaceCollapse="preserve" 
+					fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" 
+					text="{m_mTounamentDetail.strDisplayName}"
+					trackingRight="1%" kerning="off" x="159" y="64">			
+		</s:RichText>
+		<s:RichText d:userLabel="Fee :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="97" y="98">
+			<s:content><s:p><s:span>Fee :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="............... copy 3" textAlign="center" whiteSpaceCollapse="preserve" 
+					fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" 
+					text="{m_mTounamentDetail.strFee}"
+					trackingRight="1%" kerning="off" x="159" y="98">			
+		</s:RichText>
+		<s:RichText d:userLabel="Small Blind :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="49" y="188">
+			<s:content><s:p><s:span>Small Blind :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="............... copy 2" textAlign="center" whiteSpaceCollapse="preserve" 
+					fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" 
+					text="{m_mTounamentDetail.strBetChip}"
+					trackingRight="1%" kerning="off" x="158" y="188">
+		</s:RichText>
+		<s:RichText d:userLabel="Capacity :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="64" y="129">
+			<s:content><s:p><s:span>Capacity :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="..............." textAlign="center" whiteSpaceCollapse="preserve" 
+					fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" 
+					text="{m_mTounamentDetail.strPlayerCount}/{m_mTounamentDetail.strCapacity}"
+					trackingRight="1%" kerning="off" x="158" y="129">
+			
+		</s:RichText>
+		<s:RichText d:userLabel="Status :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="80" y="159">
+			<s:content><s:p><s:span>Status :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="............... copy" textAlign="center" whiteSpaceCollapse="preserve" 
+					fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%"
+					text="{m_mTounamentDetail.strStatus}"
+					trackingRight="1%" kerning="off" x="158" y="159">
+		</s:RichText>
+		<s:RichText d:userLabel="Prize :" textAlign="center" whiteSpaceCollapse="preserve" fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" trackingRight="1%" kerning="off" x="88" y="218">
+			<s:content><s:p><s:span>Prize :</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText d:userLabel="............... copy 3" textAlign="center" whiteSpaceCollapse="preserve" 
+					fontFamily="Arial" color="#ffffff" fontSize="14" lineHeight="120%" 
+					text="{m_mTounamentDetail.strFirstPrize}%-{m_mTounamentDetail.strSecondPrize}%-{m_mTounamentDetail.strThridPrize}%"
+					trackingRight="1%" kerning="off" x="158" y="218">			
+		</s:RichText>
+		<s:Button x="186" y="261" label="Cancel" 
+				  skinClass="components.btn_Cancel" click="m_cTournamentDetail.handleBtnCancel_click(event)"/>
+		<s:Button x="97" y="261" label="@{m_mTounamentDetail.strRegistierLabel}" 
+				  skinClass="components.btn_Cancel" click="m_cTournamentDetail.handleBtnOK_click(event)"/>
+	</fx:DesignLayer>
+	<s:RichText id="richtext3" d:userLabel="Password dimenticata?" x="4" y="245" width="343"
+				color="#fefefe" fontFamily="Verdana" fontSize="12" lineHeight="120%"
+				text="{m_mTounamentDetail.strStatusMsg}" textAlign="center" whiteSpaceCollapse="preserve">			
+	</s:RichText>
+</s:Group>
+
+

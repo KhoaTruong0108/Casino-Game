@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="139" height="58">
+	<fx:Metadata>[HostComponent("spark.components.Button")]</fx:Metadata>
+	<s:states>
+		<s:State name="up"/>
+		<s:State name="over"/>
+		<s:State name="down"/>
+		<s:State name="disabled"/>
+	</s:states>
+	<s:BitmapImage d:userLabel="Shape 9 copy's Outer Glow" x="0" y="0" blendMode="screen"
+				   smooth="true"
+				   source="@Embed('/assets/images/table/Shape 9 copy_s Outer Glow.png')"
+				   alpha.disabled="0.5"/>
+	<s:BitmapImage d:userLabel="Shape 9 copy's Outer Stroke" x="13" y="13" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 9 copy_s Outer Stroke.png')"
+				   alpha.disabled="0.5"/>
+	<s:BitmapImage d:userLabel="Shape 9 copy" x="14" y="14" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 9 copy.png')"
+				   visible.disabled="false"
+				   visible.down="false"
+				   visible.up="false"/>
+	<s:RichText id="labelDisplay" d:userLabel="Leave Game" x="25" y="23" color="#ffffff"
+				fontFamily="Verdana" fontSize="13.05" fontWeight="bold" lineHeight="120%"
+				whiteSpaceCollapse="preserve"
+				alpha.disabled="0.5" tabStops.disabled="S0 S50">
+	</s:RichText>
+</s:Skin>

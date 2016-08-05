@@ -1,0 +1,1337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+			   xmlns:components="components.*"
+			   preloaderChromeColor="#FFFFFF"
+			   width="1000" height="600" backgroundColor="#000000" currentState="Start"	
+			   creationComplete="application1_creationCompleteHandler(event)" xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Declarations>
+		<mx:EmailValidator id="m_emailValidator" valid="m_cRegistry.emailValidator_valid(event)"
+						   invalid="m_cRegistry.emailValidator_invalid(event)" />
+		<mx:SoundEffect id="m_soundEffect" useDuration="false" loops="0"/>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import controller.C_BetBoard;
+			import controller.C_Cashier;
+			import controller.C_ChatBox;
+			import controller.C_Game;
+			import controller.C_Lobby_Cash;
+			import controller.C_Lobby_Tournament;
+			import controller.C_Login;
+			import controller.C_Registry;
+			
+			import model.M_BetBoard;
+			import model.M_Cashier;
+			import model.M_ChatBox;
+			import model.M_DebugLog;
+			import model.M_Game;
+			import model.M_Lobby_Cash;
+			import model.M_Lobby_Tournament;
+			import model.M_Login;
+			import model.M_Registry;
+			
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			import spark.events.TextOperationEvent;
+			
+			import zUtilities.MainController;
+			import zUtilities.NumberFormat;
+			import zUtilities.Resource;
+			
+			[Bindable]
+			private var m_mLogin:M_Login = M_Login.getInstance();
+			[Bindable]
+			private var m_mRegistry:M_Registry = M_Registry.getInstance();
+			[Bindable]
+			private var m_mGame:M_Game = M_Game.getInstance();
+			[Bindable]
+			private var m_mBetBoard:M_BetBoard = M_BetBoard.getInstance();
+			[Bindable]
+			private var m_mLobby_Cash:M_Lobby_Cash = M_Lobby_Cash.getInstance();
+			[Bindable]
+			private var m_mLobby_Tournament:M_Lobby_Tournament = M_Lobby_Tournament.getInstance();
+			[Bindable]
+			private var m_mChatBox:M_ChatBox = M_ChatBox.getInstance();
+			[Bindable]
+			private var m_mCashier:M_Cashier = M_Cashier.getInstance();
+			[Bindable]
+			private var m_mdebug:M_DebugLog = M_DebugLog.getInstance();
+			/* [Bindable]
+			private var m_globalVar:GlobalVariables = GlobalVariables.getInstance(); */
+			// declare for embed card images
+			private var m_cardSource:Resource = Resource.getInstance();
+			
+			
+			private var m_cLogin:C_Login = new C_Login();
+			private var m_cRegistry:C_Registry = new C_Registry();
+			private var m_cGame:C_Game = new C_Game();
+			private var m_cBetBoard:C_BetBoard = new C_BetBoard();
+			private var m_cLobby_Cash:C_Lobby_Cash = new C_Lobby_Cash();
+			private var m_cLobby_Tournament:C_Lobby_Tournament = new C_Lobby_Tournament();
+			private var m_cChatBox:C_ChatBox = C_ChatBox.getInstance();
+			
+			private var m_cCashier:C_Cashier = new C_Cashier();
+			
+			
+			private var m_cMain:MainController = MainController.getInstance();
+			
+			protected function application1_creationCompleteHandler(event:FlexEvent):void
+			{
+				m_cMain.setMain(this);
+				//m_cLogin.handleLoginAutomatic(); 
+			}
+			
+			public function playSound(source: Class):void{
+				//try{
+				if(source != null){
+					m_soundEffect.source = source;
+					//m_soundEffect.end();
+					m_soundEffect.play();
+				}
+				/* }catch(err: Error){
+					
+				} */
+			}
+			
+			protected function hscrollbar1_changeHandler(event:Event):void
+			{
+				//m_txtRaise.text = hscrollbar1.value.toString();
+				m_mBetBoard.strRaiseValue = hscrollbar1.value.toString();
+			}
+			
+			protected function m_txtRaise_changeHandler(event:TextOperationEvent):void
+			{
+				//hscrollbar1.value = Number(m_txtRaise.text);
+				m_mBetBoard.iRaiseValue = Number(m_txtRaise.text);
+			}
+			
+			protected function EnterStateTableHandler(event:FlexEvent):void
+			{
+				m_mGame.initUI();
+			}
+			
+			protected function state1_enterStateHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+					
+			}
+			
+			protected function m_ckbDebugLog_clickHandler(event:MouseEvent):void
+			{
+				m_mdebug.isVisible = m_ckbDebugLog.selected;
+			}
+			
+		]]>
+
+	</fx:Script>
+	<s:states>
+		<s:State name="Start"/>
+		<s:State name="Registry"/>
+		<s:State name="Lobby_Cash" 
+				 enterState="m_cLobby_Cash.handleLobbyCash_enterState(event)"/>
+		<s:State name="Lobby_Tournament" enterState="m_cLobby_Tournament.handleLobbyTournament_enterState(event)"/>
+		<s:State name="Cashier" enterState="m_cCashier.handleCashier_enterState(event)"/>
+		<s:State name="Table" enterState="EnterStateTableHandler(event)"/>
+	</s:states>
+	<fx:DesignLayer d:userLabel="Layer 1">
+		<s:BitmapImage id="bitmapimage2" includeIn="Registry,Start" x="-12" y="0" d:locked="true"
+					   smooth="true" source="@Embed('/assets/images/RasterizedItems.jpg')"/>
+		<s:TextInput id="textinput2" includeIn="Start" x="378" y="345" enabled="true"
+					 skinClass="components.txt_Login_Username" text="@{m_mLogin.UserName}"/>
+		<s:BitmapImage id="bitmapimage1" includeIn="Start" x="378" y="394" smooth="true"
+					   source="@Embed('/assets/images/RasterizedItems1.png')"/>
+		<s:TextInput id="textinput1" includeIn="Start" x="389" y="406" enabled="true"
+					 enter="m_cLogin.HandleLogin(event)" skinClass="components.txt_Login_Password"
+					 text="@{m_mLogin.Password}"/>
+		<s:TextInput id="textinput5" includeIn="Registry" x="401" y="182" enabled="true"
+					 skinClass="components.txt_Login_Username" text="@{m_mRegistry.UserName}"/>
+		<s:BitmapImage id="bitmapimage5" includeIn="Registry" x="401" y="231" smooth="true"
+					   source="@Embed('/assets/images/RasterizedItems1.png')"/>
+		<s:TextInput id="textinput6" includeIn="Registry" x="412" y="243" enabled="true"
+					 enter="m_cLogin.HandleLogin(event)" skinClass="components.txt_Login_Password"
+					 text="@{m_mRegistry.Password}"/>
+		<s:RichText id="richtext9" d:userLabel="Username" includeIn="Registry" x="296" y="203"
+					color="#b2b2b2" fontFamily="Verdana" fontSize="14" lineHeight="214.3%"
+					whiteSpaceCollapse="preserve">
+			<s:content><s:p><s:span>Username</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText id="richtext12" d:userLabel="Password" includeIn="Registry" x="301" y="253"
+					color="#b2b2b2" fontFamily="Verdana" fontSize="14" lineHeight="214.3%"
+					whiteSpaceCollapse="preserve">
+			<s:content><s:p><s:span>Password</s:span></s:p></s:content>
+		</s:RichText>
+		<s:TextInput id="textinput4" includeIn="Registry" x="412" y="293" enabled="true"
+					 enter="m_cLogin.HandleLogin(event)" skinClass="components.txt_Login_Password"
+					 text="@{m_mRegistry.ConfirmPass}"/>
+		<s:TextInput id="textinput0" includeIn="Registry" x="401" y="331" enabled="true"
+					 skinClass="components.txt_Login_Username" text="@{m_mRegistry.Email}" focusOut="m_cRegistry.emailInput_focusOut(event)"/>
+		<s:BitmapImage id="bitmapimage0" includeIn="Registry" x="401" y="281" smooth="true"
+					   source="@Embed('/assets/images/RasterizedItems1.png')"/>
+		<s:RichText id="richtext0" d:userLabel="Email" includeIn="Registry" x="333" y="349"
+					color="#b2b2b2" fontFamily="Verdana" fontSize="14" lineHeight="214.3%"
+					whiteSpaceCollapse="preserve">
+			<s:content><s:p><s:span>Email</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText id="richtext14" d:userLabel="Confirm Pass" includeIn="Registry" x="276" y="300"
+					color="#b2b2b2" fontFamily="Verdana" fontSize="14" lineHeight="214.3%"
+					whiteSpaceCollapse="preserve">
+			<s:content><s:p><s:span>Confirm Pass</s:span></s:p></s:content>
+		</s:RichText>
+		<s:TextInput id="textinput7" includeIn="Registry" x="401" y="385" enabled="true"
+					 focusOut="m_cRegistry.emailInput_focusOut(event)"
+					 skinClass="components.txt_Login_Username" text="@{m_mRegistry.Avatar}"/>
+		<s:RichText id="richtext5" d:userLabel="Avatar" includeIn="Registry" x="333" y="403"
+					color="#b2b2b2" fontFamily="Verdana" fontSize="14" lineHeight="214.3%"
+					whiteSpaceCollapse="preserve">
+			<s:content><s:p><s:span>Avatar</s:span></s:p></s:content>
+		</s:RichText>
+		<s:Button id="m_btnBrowseAvatar" includeIn="Registry" x="652" y="399" width="30" height="25"
+				  label="..." click="m_cRegistry.HandleFileBrowser(event)"/>
+		<s:RichText id="richtext2" d:userLabel="Username" includeIn="Start" x="273" y="366"
+					color="#b2b2b2" fontFamily="Verdana" fontSize="14" lineHeight="214.3%"
+					whiteSpaceCollapse="preserve">
+			<s:content><s:p><s:span>Username</s:span></s:p></s:content>
+		</s:RichText>
+		<s:RichText id="richtext1" d:userLabel="Password" includeIn="Start" x="278" y="416"
+					color="#b2b2b2" fontFamily="Verdana" fontSize="14" lineHeight="214.3%"
+					whiteSpaceCollapse="preserve">
+			<s:content><s:p><s:span>Password</s:span></s:p></s:content>
+		</s:RichText>
+		<s:Button id="button1" includeIn="Start" x="291" y="423" height="111" buttonMode="true"
+				  click="m_cLogin.HandleLogin(event)"
+				  skinClass="components.btn_Login"/>
+		<s:RichText id="richtext3" d:userLabel="Password dimenticata?" includeIn="Start" x="278"
+					y="542" width="343" color="#fefefe" fontFamily="Verdana" fontSize="12"
+					lineHeight="120%" text="{m_mLogin.Status}" textAlign="center"
+					whiteSpaceCollapse="preserve">			
+		</s:RichText>
+		
+		<s:BitmapImage id="bitmapimage3" d:userLabel="Layer 0"
+					   includeIn="Lobby_Cash,Lobby_Tournament,Cashier" x="-1" width="1003"
+					   d:locked="true" smooth="true"
+					   source="@Embed('/assets/images/lobby/Layer 0.png')"
+					   y.Cashier="-1" height.Cashier="602"
+					   y.Lobby_Cash="-1" height.Lobby_Cash="601"
+					   y.Lobby_Tournament="0" height.Lobby_Tournament="601"/>
+		<s:BitmapImage id="bitmapimage11" d:userLabel="Shape 5's Outer Glow"
+					   includeIn="Lobby_Cash,Lobby_Tournament,Cashier" x="3" y="181" blendMode="screen"
+					   smooth="true"
+					   source="@Embed('/assets/images/lobby/Shape 5_s Outer Glow.png')"/>
+		<s:BitmapImage id="bitmapimage19" d:userLabel="Shape 5's Outer Stroke"
+					   includeIn="Lobby_Cash,Lobby_Tournament,Cashier" x="17" y="194" smooth="true"
+					   source="@Embed('/assets/images/lobby/Shape 5_s Outer Stroke.png')"/>
+		<s:BitmapImage id="bitmapimage4" includeIn="Lobby_Cash,Lobby_Tournament" x="18" y="195"
+					   d:locked="true" smooth="true"
+					   source="@Embed('/assets/images/RasterizedItems7.png')"/>
+		<s:BitmapImage id="bitmapimage41" includeIn="Cashier" x="18" y="195"
+					   d:locked="true" smooth="true"
+					   source="@Embed('/assets/images/lobby/Shape 5.png')"/>
+		
+		<s:BitmapImage id="bitmapimage17" d:userLabel="Shape 9's Outer Glow"
+					   includeIn="Lobby_Cash,Lobby_Tournament" x="14" y="205" blendMode="screen"
+					   smooth="true"
+					   source="@Embed('/assets/images/lobby/Shape 9_s Outer Glow.png')"/>
+		<s:BitmapImage id="bitmapimage6" d:userLabel="Shape 9's Outer Stroke"
+					   includeIn="Lobby_Cash,Lobby_Tournament,Cashier" x="28" y="219" smooth="true"
+					   source="@Embed('/assets/images/lobby/Shape 9_s Outer Stroke.png')"/>
+		<s:BitmapImage id="bitmapimage18" d:userLabel="Shape 9"
+					   includeIn="Lobby_Cash,Lobby_Tournament,Cashier" x="29" y="220" smooth="true"
+					   source="@Embed('/assets/images/lobby/Shape 9.png')"
+					   x.Cashier="29" y.Cashier="220">
+			<s:mask>
+				<s:Group x="0" y="0">
+					<s:Path winding="evenOdd" data="M 10.05 -0.1 L 920 -0.1 C 925.35 -0.1 929.65 3.45 929.65 7.9 L 929.65 28 C 929.65 32.4 925.35 36 920 36 L 10.05 36 C 4.75 36 0.4 32.4 0.4 28 L 0.4 7.9 C 0.4 3.45 4.75 -0.1 10.05 -0.1">
+						<s:fill>
+							<s:SolidColor color="#ff0000"/>
+						</s:fill>
+					</s:Path>
+				</s:Group>
+			</s:mask>
+		</s:BitmapImage>
+		<s:RichText id="richtext10" d:userLabel="Tables"
+					includeIn="Lobby_Cash,Lobby_Tournament,Cashier" x="82" y="233" color="#ffffff"
+					fontFamily="Verdana" fontSize="14" whiteSpaceCollapse="preserve"
+					x.Cashier="122" y.Cashier="233" color.Cashier="#FFFFFF" text.Cashier="Date"
+					lineHeight.Lobby_Cash="120%"
+					lineHeight.Lobby_Tournament="120%">
+			<s:content.Lobby_Tournament><s:p><s:span>Tables</s:span></s:p></s:content.Lobby_Tournament>
+			<s:content.Lobby_Cash><s:p><s:span>Tables</s:span></s:p></s:content.Lobby_Cash>
+		</s:RichText>
+		<s:RichText id="richtext4" d:userLabel="Stakes"
+					includeIn="Lobby_Cash,Lobby_Tournament,Cashier" x="235" y="233" color="#ffffff"
+					fontFamily="Verdana" fontSize="14" whiteSpaceCollapse="preserve"
+					x.Cashier="361" y.Cashier="233" color.Cashier="#FFFFFF" text.Cashier="Action"
+					lineHeight.Lobby_Cash="120%"
+					x.Lobby_Tournament="245" color.Lobby_Tournament="#FFFFFF"
+					text.Lobby_Tournament="Fee">
+			<s:content.Lobby_Cash><s:p><s:span>Stakes</s:span></s:p></s:content.Lobby_Cash>
+		</s:RichText>
+		<s:RichText id="richtext7" d:userLabel="Players"
+					includeIn="Lobby_Cash,Lobby_Tournament,Cashier" x="394" y="231" color="#ffffff"
+					fontFamily="Verdana" fontSize="14" whiteSpaceCollapse="preserve"
+					x.Cashier="601" y.Cashier="231" color.Cashier="#FFFFFF" text.Cashier="Amount"
+					lineHeight.Lobby_Cash="120%"
+					lineHeight.Lobby_Tournament="120%">
+			<s:content.Lobby_Tournament><s:p><s:span>Players</s:span></s:p></s:content.Lobby_Tournament>
+			<s:content.Lobby_Cash><s:p><s:span>Players</s:span></s:p></s:content.Lobby_Cash>
+		</s:RichText>
+		<s:RichText id="richtext11" d:userLabel="Min" includeIn="Lobby_Cash,Lobby_Tournament,Cashier"
+					x="568" y="232" color="#ffffff" fontFamily="Verdana" fontSize="14"
+					whiteSpaceCollapse="preserve"
+					x.Cashier="847" y.Cashier="232" color.Cashier="#FFFFFF" text.Cashier="By"
+					lineHeight.Lobby_Cash="120%"
+					x.Lobby_Tournament="561" color.Lobby_Tournament="#FFFFFF"
+					text.Lobby_Tournament="Status">
+			<s:content.Lobby_Cash><s:p><s:span>Min</s:span></s:p></s:content.Lobby_Cash>
+		</s:RichText>
+		<s:RichText id="richtext6" d:userLabel="Max" includeIn="Lobby_Cash,Lobby_Tournament" x="727"
+					y="232" color="#ffffff" fontFamily="Verdana" fontSize="14"
+					whiteSpaceCollapse="preserve"
+					lineHeight.Lobby_Cash="120%"
+					x.Lobby_Tournament="713" y.Lobby_Tournament="232"
+					color.Lobby_Tournament="#FFFFFF" text.Lobby_Tournament="Stakes">
+			<s:content.Lobby_Cash><s:p><s:span>Max</s:span></s:p></s:content.Lobby_Cash>
+		</s:RichText>
+		<s:RichText id="richtext8" d:userLabel="Status" includeIn="Lobby_Cash,Lobby_Tournament"
+					x="873" y="232" color="#ffffff" fontFamily="Verdana" fontSize="14"
+					whiteSpaceCollapse="preserve"
+					lineHeight.Lobby_Cash="120%"
+					x.Lobby_Tournament="870" color.Lobby_Tournament="#FFFFFF"
+					text.Lobby_Tournament="Prizes">
+			<s:content.Lobby_Cash><s:p><s:span>Status</s:span></s:p></s:content.Lobby_Cash>
+		</s:RichText>
+		<s:Button id="button4" includeIn="Lobby_Cash,Lobby_Tournament" x="816" y="528" buttonMode="true"
+				  click.Lobby_Cash ="m_cLobby_Cash.handleBtnJoin(event)"
+				  click.Lobby_Tournament ="m_cLobby_Tournament.handleJoinTournament_Click(event)"
+				  skinClass="components.btn_Lobby_type2"/>
+		<s:BitmapImage id="bitmapimage7" d:userLabel="Shape 6" includeIn="Lobby_Cash" x="19" y="94" visible="false"
+					   smooth="true" source="@Embed('/assets/images/lobby/Shape 6.png')"/>
+		<s:Button id="m_btnSitNGo" includeIn="Lobby_Cash,Lobby_Tournament" visible="true" x="169" y="80"
+				  buttonMode="true" click="m_cMain.handleBtnTournament(event)"
+				  skinClass="components.btn_Lobby_type1"
+				  label="Sit &amp; Go"/>
+		<s:Button id="m_btnHoldem" includeIn="Lobby_Cash,Lobby_Tournament" visible="true" x="6"
+				  y="81" label="Hold'Em" buttonMode="true" click="m_cMain.handleBtnPoker(event)"
+				  skinClass="components.btn_Lobby_type1"/>
+		<s:BitmapImage id="bitmapimage8" d:userLabel="Layer 2" includeIn="Lobby_Cash,Lobby_Tournament,Cashier"
+					   x="278" y="183" smooth="true"
+					   source="@Embed('/assets/images/lobby/Layer 2.png')"/>
+		<s:BitmapImage id="bitmapimage9" d:userLabel="P  KER" includeIn="Lobby_Cash,Lobby_Tournament,Cashier"
+					   x="14" y="11" smooth="true"
+					   source="@Embed('/assets/images/lobby/P  KER.png')"/>
+		<s:Button id="m_btnLobbyCashier" includeIn="Lobby_Cash,Lobby_Tournament" x="327" y="525"
+				  label="Cashier" buttonMode="true" click="m_cMain.handleBtnCashier(event)"
+				  skinClass="components.btn_Lobby_type1"
+				  label.Cashier="Lobby"/>
+		<s:Button id="m_btnLobby" includeIn="Cashier" x="327" y="525"
+				  buttonMode="true" click="m_cMain.handleBtnCashierLobby(event)"
+				  skinClass="components.btn_Lobby_type1"
+				  label="Lobby"/>
+		<s:Button id="m_btnLobbyLogout" includeIn="Lobby_Cash,Lobby_Tournament,Cashier" x="499" y="525" label="LogOut"
+				  buttonMode="true" click="m_cGame.handleBtnLogout_click(event)"
+				  skinClass="components.btn_Lobby_type1"/>
+		<s:BitmapImage id="bitmapimage28" includeIn="Cashier" x="0" y="78" height="116" smooth="true"
+					   source="@Embed('/assets/images/Untitled-1.png')"/>
+		<s:RichText id="richtext17" includeIn="Cashier" x="58" y="109" color="#FFFFFF"
+					fontFamily="Arial" fontSize="18" fontWeight="bold" tabStops="S0 S50"
+					text="Welcome"/>
+		<s:RichText id="richtext16" includeIn="Cashier" x="163" y="109" color="#FDFF00"
+					fontFamily="Arial" fontSize="18" tabStops="S0 S50" text="{m_mCashier.strUsername}"/>
+		<s:RichText id="richtext18" includeIn="Cashier" x="58" y="144" color="#FFFFFF"
+					fontFamily="Arial" fontSize="18" fontWeight="bold" tabStops="S0 S50"
+					text="Total Money:"/>
+		<s:Rect id="rect1" includeIn="Cashier" x="181" y="140" width="155" height="25" radiusX="10">
+			<s:fill>
+				<s:SolidColor color="#333333"/>
+			</s:fill>
+		</s:Rect>
+		<s:RichText id="richtext15" includeIn="Cashier" x="186" y="145" color="#FFFFFF"
+					fontFamily="Arial" fontSize="18" tabStops="S0 S50" text="@{m_mCashier.strFish}"/>
+		
+		<s:BitmapImage id="bitmapimage31" includeIn="Table" x="-1" y="0" d:locked="true"
+					   smooth="true" source="@Embed('/assets/images/RasterizedItems3.jpg')"/>
+		<s:BitmapImage id="bitmapimage29" includeIn="Table" x="340" y="-3" smooth="true"
+					   source="@Embed('/assets/images/RasterizedItems4.png')"/>
+		 
+		<s:HScrollBar id="hscrollbar1" includeIn="Table" x="223" y="546"
+					  change="hscrollbar1_changeHandler(event)" fixedThumbSize="true" 
+					  maximum="{m_mBetBoard.maximum}" minimum="{m_mBetBoard.minnimum}" stepSize="1"					  
+					  skinClass="components._scroll_Table_Fold"
+					  value="@{m_mBetBoard.iRaiseValue}" visible="{m_mBetBoard.isVisibled}"/>
+		<s:TextInput id="m_txtRaise" includeIn="Table" x="469" y="537" restrict="0-9"
+					 change="m_txtRaise_changeHandler(event)" skinClass="components.txt_Table_Fold"
+					 text="@{m_mBetBoard.strRaiseValue}" visible="{m_mBetBoard.isVisibled}"/>
+		<s:RichText id="richtext22" d:userLabel="100" includeIn="Table" x="722" y="561"
+					color="#ffffff" fontFamily="Verdana" fontSize="13.05" fontWeight="bold"
+					lineHeight="120%" whiteSpaceCollapse="preserve" visible="false">
+			<s:content><s:p><s:span>100</s:span></s:p></s:content>
+		</s:RichText>
+		<s:BitmapImage id="bitmapimage32" d:userLabel="Shape 10" includeIn="Table" x="11" y="447"
+					   smooth="true" source="@Embed('/assets/images/table/Shape 10.png')"/>
+		<s:BitmapImage id="bitmapimage30" d:userLabel="Layer 12" includeIn="Table" x="10" y="440"
+					   smooth="true" source="@Embed('/assets/images/table/Layer 12.png')"/>
+		<s:TextInput id="textinput3" includeIn="Table" x="15" y="551"
+					 text="@{m_mChatBox.strChatMessage}"
+					 enter="m_cChatBox.handleBtnSendChat_click(event)"
+					 skinClass="components.txt_Table_Chat"/>
+		<s:Button id="button13" includeIn="Table" x="159" y="552" buttonMode="true"
+				  click="m_cChatBox.handleBtnSendChat_click(event)"
+				  skinClass="components.btn_Table_Send"/>
+		<s:RichText id="richtext23" d:userLabel="Chat" includeIn="Table" x="104" y="458"
+					color="#ffffff" fontFamily="Verdana" fontSize="10" fontWeight="bold"
+					lineHeight="120%" tabStops="S0" text="Chat" whiteSpaceCollapse="preserve"/>
+		
+		<s:RichText id="richtext19" d:userLabel="Pot: 1200" includeIn="Table" x="439" y="166"
+					width="124" color="#FEFEFE" fontFamily="Verdana" fontSize="16" fontWeight="bold"
+					lineHeight="200%" text="{m_mGame.strPot}" textAlign="center"
+					whiteSpaceCollapse="preserve"/>
+		<s:Label x="405" y="10" color="#fefefe" fontFamily="Verdana" fontSize="13" includeIn="Table"
+				 text="Table name: "/>
+		<s:Label x="449" y="35" color="#fefefe" includeIn="Table" fontFamily="Verdana" fontSize="13" text="Blind: "/>
+		<s:Label x="439" y="60" color="#fefefe" includeIn="Table" fontFamily="Verdana" fontSize="13" text="Player: "/>
+		<s:Label x="487" y="10" color="#fefefe" includeIn="Table" fontFamily="Verdana" fontSize="13" fontWeight="bold"
+				 text="{m_mGame.strTableName}"/>
+		<s:Label x="487" y="35" color="#fefefe" includeIn="Table" fontFamily="Verdana" fontSize="13" fontWeight="bold"
+				 text="{m_mGame.strSmallBlind}/{m_mGame.strBigBlind}"/>
+		<s:Label x="487" y="60" color="#fefefe" includeIn="Table" fontFamily="Verdana" fontSize="13" fontWeight="bold"
+				 text="{m_mGame.strNumPlayer}/{m_mGame.strMaxPLayer}"/>
+		<s:Button id="m_btnLeaveGame" includeIn="Table" x="866" y="446" label="Leave Game"
+				  buttonMode="true" click="m_cGame.handleBtnLeaveGame_click(event)"
+				  
+				  skinClass="components.btn_Table_type3"/>
+		<s:Button id="m_btnGotoLobby" includeIn="Table" x="866" y="493" label=" Go to Lobby"
+				  buttonMode="true" 
+				  
+				  click="m_cGame.handleBtnGotoLobby_click(event)"
+				  skinClass="components.btn_Table_type3"/>
+		
+		<s:Button id="m_btnCheck" includeIn="Table" x="653" y="537" label="CHECK" buttonMode="true"
+				  click="m_cBetBoard.handleBtnCheck_click(event)" visible="{m_mBetBoard.isVisibled}"
+				  skinClass="components.btn_Table_type2"/>
+		<s:Button id="m_btnFold" includeIn="Table" x="779" y="537" label="FOLD" buttonMode="true"
+				  click="m_cBetBoard.handleBtnFold_click(event)" visible="{m_mBetBoard.isVisibled}"
+				  skinClass="components.btn_Table_typ1"/>
+		<s:Button id="m_btnRaise" includeIn="Table" x="546" y="537" label="@{m_mBetBoard.strRaiseLabel}" buttonMode="true"
+				  click="m_cBetBoard.handleBtnRaise_click(event)" visible="{m_mBetBoard.isVisibled}"
+				  skinClass="components.btn_Table_typ1"/>
+		
+		<s:Button id="m_btnShowhand" includeIn="Table" x="885" y="537" buttonMode="true" label="ALL IN"
+				  click="m_cBetBoard.handleBtnShowHand_click(event)" visible="{m_mBetBoard.isVisibled}"
+				  skinClass="components.btn_Table_typ1"/>		
+		
+		
+		<components:MySkinnableContainer id="m_comChat" includeIn="Table" x="16" y="464" width="181"
+										 skinClass="components.VerticalScrollb_ScrollPanel4"/>
+		<s:BitmapImage id="bitmapimage20" d:userLabel="Shape 14" includeIn="Lobby_Tournament" x="964" y="279"
+					   smooth="true" source="@Embed('/assets/images/lobby2/Shape 14.png')"/>
+		<s:BitmapImage id="bitmapimage21" d:userLabel="Shape 14 copy" includeIn="Lobby_Tournament" x="964"
+					   y="268" smooth="true"
+					   source="@Embed('/assets/images/lobby2/Shape 14 copy.png')"/>
+		<s:BitmapImage id="bitmapimage23" d:userLabel="Shape 14 copy 2" includeIn="Lobby_Tournament" x="964"
+					   y="496" smooth="true"
+					   source="@Embed('/assets/images/lobby2/Shape 14 copy 2.png')"/>
+		<s:BitmapImage id="bitmapimage22" d:userLabel="Shape 15" includeIn="Lobby_Tournament" x="965" y="324"
+					   smooth="true" source="@Embed('/assets/images/lobby2/Shape 15.png')"/>
+		<s:Path id="path1" includeIn="Lobby_Tournament" x="968.25" y="272.85"
+				data="M 5.49 4.73 L 0.01 4.73 2.75 -0.01 Z ">
+			<s:fill>
+				<s:SolidColor color="#C2E22D"/>
+			</s:fill>
+		</s:Path>
+		<s:Path id="path2" includeIn="Lobby_Tournament" x="968.25" y="499.85"
+				data="M 5.49 4.73 L 0.01 4.73 2.75 -0.01 Z " rotation="180" transformX="2.75"
+				transformY="2.36">
+			<s:fill>
+				<s:SolidColor color="#C2E22D"/>
+			</s:fill>
+		</s:Path>
+		<s:BitmapImage id="bitmapimage24" d:userLabel="Shape 14" includeIn="Cashier" x="964" y="279"
+					   smooth="true" source="@Embed('/assets/images/lobby2/Shape 14.png')"/>
+		<s:BitmapImage id="bitmapimage25" d:userLabel="Shape 14 copy" includeIn="Cashier" x="964"
+					   y="268" smooth="true"
+					   source="@Embed('/assets/images/lobby2/Shape 14 copy.png')"/>
+		<s:BitmapImage id="bitmapimage26" d:userLabel="Shape 14 copy 2" includeIn="Cashier" x="964"
+					   y="496" smooth="true"
+					   source="@Embed('/assets/images/lobby2/Shape 14 copy 2.png')"/>
+		<s:BitmapImage id="bitmapimage27" d:userLabel="Shape 15" includeIn="Cashier" x="965" y="324"
+					   smooth="true" source="@Embed('/assets/images/lobby2/Shape 15.png')"/>
+		<s:Path id="path4" includeIn="Cashier" x="968.25" y="272.85"
+				data="M 5.49 4.73 L 0.01 4.73 2.75 -0.01 Z ">
+			<s:fill>
+				<s:SolidColor color="#C2E22D"/>
+			</s:fill>
+		</s:Path>
+		<s:Path id="path3" includeIn="Cashier" x="968.25" y="499.85"
+				data="M 5.49 4.73 L 0.01 4.73 2.75 -0.01 Z " rotation="180" transformX="2.75"
+				transformY="2.36">
+			<s:fill>
+				<s:SolidColor color="#C2E22D"/>
+			</s:fill>
+		</s:Path>
+		
+		<s:List id="list1" includeIn="Lobby_Cash" x="30" y="269"
+				dataProvider="{m_mLobby_Cash.arrCash}"
+				selectedItem="@{m_mLobby_Cash.oSelectedItem}"
+				doubleClickEnabled="true"
+				doubleClick="{m_cLobby_Cash.handleList_doubleClick(event)}"
+				skinClass="components.datalist_Lobby_type1" >
+		</s:List>
+		
+		<s:List id="list21" includeIn="Lobby_Tournament" x="30" y="269"
+				dataProvider="{m_mLobby_Tournament.arrCash}"
+				selectedItem="@{m_mLobby_Tournament.oSelectedItem}"
+				doubleClickEnabled="true"
+				doubleClick="{m_cLobby_Tournament.handleList_doubleClick(event)}"
+				skinClass="components.datalist_Lobby_type2" >
+		</s:List>
+		
+		<s:List id="list3" includeIn="Cashier" x="30" y="269"
+				skinClass="components.datalist_Lobby_type1" >
+		</s:List>
+		
+		
+	</fx:DesignLayer>
+	<s:BorderContainer id="m_mChipContainer" includeIn="Table" x="351" y="199" width="308"
+					   borderAlpha="0" backgroundAlpha="0"
+					   height="34">
+	</s:BorderContainer>
+
+	
+
+	<components:_comp_User_Info id="m_comUser10" includeIn="Table" x="188" y="14" myPos="9" />
+	<components:_comp_User_Info id="m_comUser09" includeIn="Table" x="9" y="54" myPos="8"/>
+	<components:_comp_User_Info id="m_comUser08" includeIn="Table" x="9" y="237" myPos="7"/>
+	<components:_comp_User_Info id="m_comUser07" includeIn="Table" x="160" y="299" myPos="6"/>
+	<components:_comp_User_Info id="m_comUser06" includeIn="Table" x="337" y="313" myPos="5"/>
+	<s:Button id="m_btnRaise0" includeIn="Table" x="684" y="504"
+			  label="pot" buttonMode="true" visible="{m_mBetBoard.isVisibled}"			  
+			  click="{m_cBetBoard.HandleRaise1_Pot(event)}"
+			  skinClass="button_pot.components.btn_Pot"/>
+	<s:Button id="m_btnRaise1" includeIn="Table" x="576" y="504" label="2/3 pot" buttonMode="true"
+			  skinClass="button_pot.components.btn_Pot" visible="{m_mBetBoard.isVisibled}"
+			  click="{m_cBetBoard.HandleRaise2_3_Pot(event)}"/>
+	<s:Button id="m_btnRaise2" includeIn="Table" x="470" y="504" label="1/2 pot" buttonMode="true"
+			  skinClass="button_pot.components.btn_Pot" visible="{m_mBetBoard.isVisibled}"
+			  click="{m_cBetBoard.HandleRaise1_2_Pot(event)}"/>
+	
+	<components:_comp_User_Info id="m_comUser05" includeIn="Table" x="520" y="313" myPos="4"/>
+	<components:_comp_User_Info id="m_comUser04" includeIn="Table" x="691" y="298" myPos="3"/>
+	<components:_comp_User_Info id="m_comUser03" includeIn="Table" x="847" y="238" myPos="2"/>
+	<components:_comp_User_Info id="m_comUser02" includeIn="Table" x="847" y="56" myPos="1"/>
+	<components:_comp_User_Info id="m_comUser01" includeIn="Table" x="672" y="16" myPos="0"/>
+	
+	<components:_comp_comCard id="m_comComCard" includeIn="Table" x="318" y="226"/>
+	
+	<s:BorderContainer id="m_mChipContainer1" includeIn="Table" x="418" y="241" width="5"
+					   borderAlpha="0" backgroundAlpha="0"
+					   height="5">
+	</s:BorderContainer>
+	
+	<s:BorderContainer id="m_mTimerContainer" includeIn="Table" x="351" y="180" width="308"
+					   borderAlpha="0" backgroundAlpha="0"
+					   height="34">
+	</s:BorderContainer>
+	<s:BorderContainer id="m_mTimerContainer2" includeIn="Table" x="5" y="8" width="175" height="29"
+					   color="#FFFEFE" borderAlpha="0" backgroundAlpha="0">
+	</s:BorderContainer>
+	<s:BorderContainer id="m_mWinnerContainer" includeIn="Table" x="351" y="202" width="308"
+					   borderAlpha="0" backgroundAlpha="0"
+					   height="34">
+	</s:BorderContainer>
+	
+	<s:BorderContainer includeIn="Cashier" x="17" y="262" backgroundAlpha="0" borderAlpha="0">		
+		<s:BitmapImage source="@Embed('/assets/images/lobby/Shape 10.png')" smooth="true" d:userLabel="Shape 10" x="240" y="0">
+			<s:mask>
+				<s:Group x="0" y="0">
+					<s:Path winding="evenOdd" data="M 0.85 0.7 L 2.45 0.7 L 2.45 256.35 L 0.85 256.35 L 0.85 0.7">
+						<s:fill>
+							<s:SolidColor color="#ff0000"/>
+						</s:fill>
+					</s:Path>
+				</s:Group>
+			</s:mask>
+		</s:BitmapImage>
+		<s:BitmapImage source="@Embed('/assets/images/lobby/Shape 10.png')" smooth="true" d:userLabel="Shape 10 copy 2" x="482" y="0">
+			<s:mask>
+				<s:Group x="0" y="0">
+					<s:Path winding="evenOdd" data="M 0.85 0.7 L 2.45 0.7 L 2.45 256.35 L 0.85 256.35 L 0.85 0.7">
+						<s:fill>
+							<s:SolidColor color="#ff0000"/>
+						</s:fill>
+					</s:Path>
+				</s:Group>
+			</s:mask>
+		</s:BitmapImage>
+		<s:BitmapImage source="@Embed('/assets/images/lobby/Shape 10.png')" smooth="true" d:userLabel="Shape 10 copy 3" x="723" y="0">
+			<s:mask>
+				<s:Group x="0" y="0">
+					<s:Path winding="evenOdd" data="M 0.85 0.7 L 2.45 0.7 L 2.45 256.35 L 0.85 256.35 L 0.85 0.7">
+						<s:fill>
+							<s:SolidColor color="#ff0000"/>
+						</s:fill>
+					</s:Path>
+				</s:Group>
+			</s:mask>
+		</s:BitmapImage>
+		<s:List x="2" y="5" width="941" dataProvider="{m_mCashier.arrCashier}"
+				skinClass="components.datalist_casshier">
+			
+		</s:List>
+	</s:BorderContainer>
+	<s:Button id="m_btnSignup" includeIn="Registry" x="325" y="493" label="Sign up"
+			  buttonMode="true" click="m_cRegistry.handleSignUpButton_Click(event)"
+			  skinClass="components.btn_Lobby_type1"/>
+	<s:Button id="m_btnCancel" includeIn="Registry" x="497" y="493" label="Cancel"
+			  buttonMode="true" click="m_cRegistry.handleCancelButton_Click(event)"
+			  skinClass="components.btn_Lobby_type1"/>
+	<s:Label includeIn="Registry" x="652" y="300" color="#F90606" fontFamily="Verdana" fontSize="14"
+			 text="@{m_mRegistry.ConfirmPassValid}"/>
+	<s:Label includeIn="Registry" x="652" y="349" color="#F90606" fontFamily="Verdana" fontSize="14"
+			 text="@{m_mRegistry.EmailValid}"/>
+	<s:Label includeIn="Registry" x="651" y="199" color="#F90606" fontFamily="Verdana" fontSize="14"
+			 text="@{m_mRegistry.UserNameValid}"/>
+	<s:Label includeIn="Registry" x="651" y="248" color="#F90606" fontFamily="Verdana" fontSize="14"
+			 text="@{m_mRegistry.PasswordValid}"/>
+	<s:Label includeIn="Registry" x="455" y="460" color="#F90606" fontFamily="Verdana" fontSize="14"
+			 text="@{m_mRegistry.Status}"/>
+	<s:Button id="m_btnSignup0" includeIn="Start" x="481" y="450" label="Sign up" buttonMode="true"
+			  click="m_cLogin.handleSignUp(event)" skinClass="components.btn_Lobby_type1"/>
+	<s:TextArea id="m_txtDebugLog" editable="false"
+				visible="{m_mdebug.isVisible}" text="@{m_mdebug.strText}"
+				x="0" y="389" width="300" height="211"/>
+	<s:CheckBox id="m_ckbDebugLog" x="898" y="-1" label="Show debug"
+				click="m_ckbDebugLog_clickHandler(event)" color="#FFFFFF"/>
+	<s:CheckBox id="m_cbAutoFold" includeIn="Table" visible="{m_mGame.isCanAutoFold}" x="794" y="521"
+				label="Fold" change="m_cGame.handleAutoFold_change(event)" selected="@{m_mGame.isAutoFold}"
+				skinClass="components.MyCheckBox"/>
+	<s:CheckBox id="m_cbSitOn" includeIn="Table" visible="{m_mGame.isCanSitOut}" x="795" y="498"
+				label="Sit out" change="m_cGame.handleSitOut_change(event)" selected="@{m_mGame.isSittingOut}"
+				skinClass="components.MyCheckBox"/>
+	
+
+	<s:transitions>
+		<s:Transition fromState="Start" interruptionBehavior="stop" toState="Lobby_Cash">
+			<s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage2}"/>
+				<s:Fade duration="750" target="{textinput2}"/>
+				<s:Fade duration="750" target="{bitmapimage1}"/>
+				<s:Fade duration="750" target="{textinput1}"/>
+				<s:Fade duration="750" target="{richtext2}"/>
+				<s:Fade duration="750" target="{richtext1}"/>
+				<s:Fade duration="750" target="{button1}"/>
+				<s:Fade duration="750" target="{richtext3}"/>
+				<s:Parallel target="{bitmapimage3}">
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="width"/>
+						<s:SimpleMotionPath property="height"/>
+					</s:Animate>
+					<s:Fade duration="750"/>
+				</s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage11}"/>
+				<s:Fade duration="750" target="{bitmapimage19}"/>
+				<s:Fade duration="750" target="{bitmapimage4}"/>
+				<s:Fade duration="750" target="{bitmapimage17}"/>
+				<s:Fade duration="750" target="{bitmapimage6}"/>
+				<s:Fade duration="750" target="{bitmapimage18}"/>
+				<s:Fade duration="750" target="{richtext10}"/>
+				<s:Fade duration="750" target="{richtext4}"/>
+				<s:Fade duration="750" target="{richtext7}"/>
+				<s:Fade duration="750" target="{richtext11}"/>
+				<s:Fade duration="750" target="{richtext6}"/>
+				<s:Fade duration="750" target="{richtext8}"/>
+				<s:Fade duration="750" target="{button4}"/>
+				<s:Fade duration="750" target="{m_btnHoldem}"/>
+				<s:Fade duration="750" target="{m_btnSitNGo}"/>
+				<s:Fade duration="750" target="{bitmapimage8}"/>
+				<s:Fade duration="750" target="{bitmapimage9}"/>
+				<s:Fade duration="750" target="{m_btnLobbyCashier}"/>
+				<s:Fade duration="750" target="{m_btnLobbyLogout}"/>
+				<s:Parallel target="{list1}">
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+					<s:Fade duration="750"/>
+				</s:Parallel>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Lobby_Cash" interruptionBehavior="stop" toState="Start">
+			<s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage2}"/>
+				<s:Fade duration="750" target="{textinput2}"/>
+				<s:Fade duration="750" target="{bitmapimage1}"/>
+				<s:Fade duration="750" target="{textinput1}"/>
+				<s:Fade duration="750" target="{richtext2}"/>
+				<s:Fade duration="750" target="{richtext1}"/>
+				<s:Fade duration="750" target="{button1}"/>
+				<s:Fade duration="750" target="{richtext3}"/>
+				<s:Parallel target="{bitmapimage3}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="width"/>
+						<s:SimpleMotionPath property="height"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage11}"/>
+				<s:Fade duration="750" target="{bitmapimage19}"/>
+				<s:Fade duration="750" target="{bitmapimage4}"/>
+				<s:Fade duration="750" target="{bitmapimage17}"/>
+				<s:Fade duration="750" target="{bitmapimage6}"/>
+				<s:Fade duration="750" target="{bitmapimage18}"/>
+				<s:Fade duration="750" target="{richtext10}"/>
+				<s:Fade duration="750" target="{richtext4}"/>
+				<s:Fade duration="750" target="{richtext7}"/>
+				<s:Fade duration="750" target="{richtext11}"/>
+				<s:Fade duration="750" target="{richtext6}"/>
+				<s:Fade duration="750" target="{richtext8}"/>
+				<s:Fade duration="750" target="{button4}"/>
+				
+				<s:Fade duration="750" target="{bitmapimage7}"/>
+				<s:Fade duration="750" target="{m_btnHoldem}"/>
+				<s:Fade duration="750" target="{m_btnSitNGo}"/>
+				<s:Fade duration="750" target="{bitmapimage8}"/>
+				<s:Fade duration="750" target="{bitmapimage9}"/>
+				<s:Fade duration="750" target="{m_btnLobbyCashier}"/>
+				<s:Fade duration="750" target="{m_btnLobbyLogout}"/>
+				<s:Parallel target="{list1}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Lobby_Cash" interruptionBehavior="stop" toState="Lobby_Tournament">
+			<s:Parallel>
+				<s:Animate duration="750" target="{bitmapimage3}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext4}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext11}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext6}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext8}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				
+				<s:Fade duration="750" target="{bitmapimage7}"/>
+				
+
+				<s:Fade duration="750" target="{bitmapimage20}"/>
+				<s:Fade duration="750" target="{bitmapimage21}"/>
+				<s:Fade duration="750" target="{bitmapimage23}"/>
+				<s:Fade duration="750" target="{bitmapimage22}"/>
+				<s:Fade duration="750" target="{path1}"/>
+				<s:Fade duration="750" target="{path2}"/>
+				<s:Animate duration="750" target="{list1}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Lobby_Cash" interruptionBehavior="stop" toState="Cashier">
+			<s:Parallel>
+				<s:Animate duration="750" target="{bitmapimage3}">
+					<s:SimpleMotionPath property="width"/>
+					<s:SimpleMotionPath property="height"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext10}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext4}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext7}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext11}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Fade duration="750" target="{richtext6}"/>
+				<s:Fade duration="750" target="{richtext8}"/>
+				<s:Fade duration="750" target="{button4}"/>
+				
+				<s:Fade duration="750" target="{bitmapimage7}"/>
+				<s:Fade duration="750" target="{m_btnHoldem}"/>
+				<s:Fade duration="750" target="{m_btnSitNGo}"/>
+				<s:Fade duration="750" target="{bitmapimage28}"/>
+				<s:Fade duration="750" target="{richtext17}"/>
+				<s:Fade duration="750" target="{richtext16}"/>
+				<s:Fade duration="750" target="{richtext18}"/>
+				<s:Fade duration="750" target="{rect1}"/>
+				<s:Fade duration="750" target="{richtext15}"/>
+
+				<s:Fade duration="750" target="{bitmapimage24}"/>
+				<s:Fade duration="750" target="{bitmapimage25}"/>
+				<s:Fade duration="750" target="{bitmapimage26}"/>
+				<s:Fade duration="750" target="{bitmapimage27}"/>
+				<s:Fade duration="750" target="{path4}"/>
+				<s:Fade duration="750" target="{path3}"/>
+				<s:Animate duration="750" target="{list1}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Lobby_Cash" interruptionBehavior="stop" toState="Table">
+			<s:Parallel>
+				<s:Parallel target="{bitmapimage3}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="width"/>
+						<s:SimpleMotionPath property="height"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage11}"/>
+				<s:Fade duration="750" target="{bitmapimage19}"/>
+				<s:Fade duration="750" target="{bitmapimage4}"/>
+				<s:Fade duration="750" target="{bitmapimage17}"/>
+				<s:Fade duration="750" target="{bitmapimage6}"/>
+				<s:Fade duration="750" target="{bitmapimage18}"/>
+				<s:Fade duration="750" target="{richtext10}"/>
+				<s:Fade duration="750" target="{richtext4}"/>
+				<s:Fade duration="750" target="{richtext7}"/>
+				<s:Fade duration="750" target="{richtext11}"/>
+				<s:Fade duration="750" target="{richtext6}"/>
+				<s:Fade duration="750" target="{richtext8}"/>
+				<s:Fade duration="750" target="{button4}"/>
+				
+				<s:Fade duration="750" target="{bitmapimage7}"/>
+				<s:Fade duration="750" target="{m_btnHoldem}"/>
+				<s:Fade duration="750" target="{m_btnSitNGo}"/>
+				<s:Fade duration="750" target="{bitmapimage8}"/>
+				<s:Fade duration="750" target="{bitmapimage9}"/>
+				<s:Fade duration="750" target="{m_btnLobbyCashier}"/>
+				<s:Fade duration="750" target="{m_btnLobbyLogout}"/>
+				<s:Fade duration="750" target="{bitmapimage31}"/>
+				<s:Fade duration="750" target="{bitmapimage29}"/>
+				<s:Fade duration="750" target="{m_btnCheck}"/>
+				<s:Fade duration="750" target="{m_txtRaise}"/>
+				<s:Fade duration="750" target="{richtext22}"/>
+				<s:Fade duration="750" target="{bitmapimage32}"/>
+				<s:Fade duration="750" target="{bitmapimage30}"/>
+				<s:Fade duration="750" target="{textinput3}"/>
+				<s:Fade duration="750" target="{button13}"/>
+				<s:Fade duration="750" target="{richtext23}"/>
+				<s:Fade duration="750" target="{m_btnShowhand}"/>
+				<s:Fade duration="750" target="{m_btnLeaveGame}"/>
+				<s:Fade duration="750" target="{richtext19}"/>
+				<s:Fade duration="750" target="{m_btnFold}"/>
+				<s:Fade duration="750" target="{m_btnRaise}"/>
+				<s:Fade duration="750" target="{m_btnGotoLobby}"/>
+				<s:Parallel target="{list1}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Lobby_Tournament" interruptionBehavior="stop" toState="Start">
+			<s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage2}"/>
+				<s:Fade duration="750" target="{textinput2}"/>
+				<s:Fade duration="750" target="{bitmapimage1}"/>
+				<s:Fade duration="750" target="{textinput1}"/>
+				<s:Fade duration="750" target="{richtext2}"/>
+				<s:Fade duration="750" target="{richtext1}"/>
+				<s:Fade duration="750" target="{button1}"/>
+				<s:Fade duration="750" target="{richtext3}"/>
+				<s:Parallel target="{bitmapimage3}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="width"/>
+						<s:SimpleMotionPath property="height"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage11}"/>
+				<s:Fade duration="750" target="{bitmapimage19}"/>
+				<s:Fade duration="750" target="{bitmapimage4}"/>
+				<s:Fade duration="750" target="{bitmapimage17}"/>
+				<s:Fade duration="750" target="{bitmapimage6}"/>
+				<s:Fade duration="750" target="{bitmapimage18}"/>
+				<s:Fade duration="750" target="{richtext10}"/>
+				<s:Parallel target="{richtext4}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{richtext7}"/>
+				<s:Parallel target="{richtext11}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Parallel target="{richtext6}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Parallel target="{richtext8}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{button4}"/>
+				<s:Fade duration="750" target="{m_btnSitNGo}"/>
+				<s:Fade duration="750" target="{bitmapimage8}"/>
+				<s:Fade duration="750" target="{bitmapimage9}"/>
+				<s:Fade duration="750" target="{m_btnLobbyCashier}"/>
+				<s:Fade duration="750" target="{m_btnLobbyLogout}"/>				
+				<s:Fade duration="750" target="{bitmapimage20}"/>
+				<s:Fade duration="750" target="{bitmapimage21}"/>
+				<s:Fade duration="750" target="{bitmapimage23}"/>
+				<s:Fade duration="750" target="{bitmapimage22}"/>
+				<s:Fade duration="750" target="{path1}"/>
+				<s:Fade duration="750" target="{path2}"/>
+				<s:Parallel target="{list1}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Lobby_Tournament" interruptionBehavior="stop" toState="Lobby_Cash">
+			<s:Parallel>
+				<s:Animate duration="750" target="{bitmapimage3}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext4}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext11}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext6}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext8}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+
+				<s:Fade duration="750" target="{bitmapimage7}"/>
+
+
+				<s:Fade duration="750" target="{bitmapimage20}"/>
+				<s:Fade duration="750" target="{bitmapimage21}"/>
+				<s:Fade duration="750" target="{bitmapimage23}"/>
+				<s:Fade duration="750" target="{bitmapimage22}"/>
+				<s:Fade duration="750" target="{path1}"/>
+				<s:Fade duration="750" target="{path2}"/>
+				<s:Animate duration="750" target="{list1}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Lobby_Tournament" interruptionBehavior="stop" toState="Cashier">
+			<s:Parallel>
+				<s:Parallel target="{bitmapimage3}">
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="width"/>
+						<s:SimpleMotionPath property="height"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Animate duration="750" target="{richtext10}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext4}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext7}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext11}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Parallel target="{richtext6}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Parallel target="{richtext8}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{button4}"/>
+				<s:Fade duration="750" target="{m_btnSitNGo}"/>
+
+				<s:Fade duration="750" target="{bitmapimage28}"/>
+				<s:Fade duration="750" target="{richtext17}"/>
+				<s:Fade duration="750" target="{richtext16}"/>
+				<s:Fade duration="750" target="{richtext18}"/>
+				<s:Fade duration="750" target="{rect1}"/>
+				<s:Fade duration="750" target="{richtext15}"/>
+				<s:Fade duration="750" target="{bitmapimage20}"/>
+				<s:Fade duration="750" target="{bitmapimage21}"/>
+				<s:Fade duration="750" target="{bitmapimage23}"/>
+				<s:Fade duration="750" target="{bitmapimage22}"/>
+				<s:Fade duration="750" target="{path1}"/>
+				<s:Fade duration="750" target="{path2}"/>
+				<s:Fade duration="750" target="{bitmapimage24}"/>
+				<s:Fade duration="750" target="{bitmapimage25}"/>
+				<s:Fade duration="750" target="{bitmapimage26}"/>
+				<s:Fade duration="750" target="{bitmapimage27}"/>
+				<s:Fade duration="750" target="{path4}"/>
+				<s:Fade duration="750" target="{path3}"/>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Lobby_Tournament" interruptionBehavior="stop" toState="Table">
+			<s:Parallel>
+				<s:Parallel target="{bitmapimage3}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="width"/>
+						<s:SimpleMotionPath property="height"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage11}"/>
+				<s:Fade duration="750" target="{bitmapimage19}"/>
+				<s:Fade duration="750" target="{bitmapimage4}"/>
+				<s:Fade duration="750" target="{bitmapimage17}"/>
+				<s:Fade duration="750" target="{bitmapimage6}"/>
+				<s:Fade duration="750" target="{bitmapimage18}"/>
+				<s:Fade duration="750" target="{richtext10}"/>
+				<s:Parallel target="{richtext4}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{richtext7}"/>
+				<s:Parallel target="{richtext11}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Parallel target="{richtext6}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Parallel target="{richtext8}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{button4}"/>
+				<s:Fade duration="750" target="{m_btnSitNGo}"/>
+				<s:Fade duration="750" target="{bitmapimage8}"/>
+				<s:Fade duration="750" target="{bitmapimage9}"/>
+				<s:Fade duration="750" target="{m_btnLobbyCashier}"/>
+				<s:Fade duration="750" target="{m_btnLobbyLogout}"/>
+
+				<s:Fade duration="750" target="{bitmapimage31}"/>
+				<s:Fade duration="750" target="{bitmapimage29}"/>
+				<s:Fade duration="750" target="{m_btnCheck}"/>				
+				<s:Fade duration="750" target="{m_txtRaise}"/>
+				<s:Fade duration="750" target="{richtext22}"/>
+				<s:Fade duration="750" target="{bitmapimage32}"/>
+				<s:Fade duration="750" target="{bitmapimage30}"/>
+				<s:Fade duration="750" target="{textinput3}"/>
+				<s:Fade duration="750" target="{button13}"/>
+				<s:Fade duration="750" target="{richtext23}"/>
+				<s:Fade duration="750" target="{m_btnShowhand}"/>
+				<s:Fade duration="750" target="{m_btnLeaveGame}"/>
+				<s:Fade duration="750" target="{richtext19}"/>
+				<s:Fade duration="750" target="{m_btnFold}"/>
+				<s:Fade duration="750" target="{m_btnRaise}"/>
+				<s:Fade duration="750" target="{m_btnGotoLobby}"/>
+				<s:Fade duration="750" target="{bitmapimage20}"/>
+				<s:Fade duration="750" target="{bitmapimage21}"/>
+				<s:Fade duration="750" target="{bitmapimage23}"/>
+				<s:Fade duration="750" target="{bitmapimage22}"/>
+				<s:Fade duration="750" target="{path1}"/>
+				<s:Fade duration="750" target="{path2}"/>
+				<s:Parallel target="{list1}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Cashier" interruptionBehavior="stop" toState="Start">
+			<s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage2}"/>
+				<s:Fade duration="750" target="{textinput2}"/>
+				<s:Fade duration="750" target="{bitmapimage1}"/>
+				<s:Fade duration="750" target="{textinput1}"/>
+				<s:Fade duration="750" target="{richtext2}"/>
+				<s:Fade duration="750" target="{richtext1}"/>
+				<s:Fade duration="750" target="{button1}"/>
+				<s:Fade duration="750" target="{richtext3}"/>
+				<s:Parallel target="{bitmapimage3}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="width"/>
+						<s:SimpleMotionPath property="height"/>
+					</s:Animate>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage11}"/>
+				<s:Fade duration="750" target="{bitmapimage19}"/>
+				<s:Fade duration="750" target="{bitmapimage4}"/>
+				<s:Fade duration="750" target="{bitmapimage17}"/>
+				<s:Fade duration="750" target="{bitmapimage6}"/>
+				<s:Fade duration="750" target="{bitmapimage18}"/>
+				<s:Parallel target="{richtext10}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Parallel target="{richtext4}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Parallel target="{richtext7}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Parallel target="{richtext11}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage8}"/>
+				<s:Fade duration="750" target="{bitmapimage9}"/>
+				<s:Fade duration="750" target="{m_btnLobbyCashier}"/>
+				<s:Fade duration="750" target="{m_btnLobbyLogout}"/>
+				<s:Fade duration="750" target="{bitmapimage28}"/>
+				<s:Fade duration="750" target="{richtext17}"/>
+				<s:Fade duration="750" target="{richtext16}"/>
+				<s:Fade duration="750" target="{richtext18}"/>
+				<s:Fade duration="750" target="{rect1}"/>
+				<s:Fade duration="750" target="{richtext15}"/>
+
+				<s:Fade duration="750" target="{bitmapimage24}"/>
+				<s:Fade duration="750" target="{bitmapimage25}"/>
+				<s:Fade duration="750" target="{bitmapimage26}"/>
+				<s:Fade duration="750" target="{bitmapimage27}"/>
+				<s:Fade duration="750" target="{path4}"/>
+				<s:Fade duration="750" target="{path3}"/>
+				<s:Parallel target="{list1}">
+					<s:Fade duration="750"/>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+				</s:Parallel>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Cashier" interruptionBehavior="stop" toState="Lobby_Cash">
+			<s:Parallel>
+				<s:Animate duration="750" target="{bitmapimage3}">
+					<s:SimpleMotionPath property="width"/>
+					<s:SimpleMotionPath property="height"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext10}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext4}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext7}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Animate duration="750" target="{richtext11}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+				<s:Fade duration="750" target="{richtext6}"/>
+				<s:Fade duration="750" target="{richtext8}"/>
+				<s:Fade duration="750" target="{button4}"/>
+
+				<s:Fade duration="750" target="{bitmapimage7}"/>
+				<s:Fade duration="750" target="{m_btnHoldem}"/>
+				<s:Fade duration="750" target="{m_btnSitNGo}"/>
+				<s:Fade duration="750" target="{bitmapimage28}"/>
+				<s:Fade duration="750" target="{richtext17}"/>
+				<s:Fade duration="750" target="{richtext16}"/>
+				<s:Fade duration="750" target="{richtext18}"/>
+				<s:Fade duration="750" target="{rect1}"/>
+				<s:Fade duration="750" target="{richtext15}"/>
+
+				<s:Fade duration="750" target="{bitmapimage24}"/>
+				<s:Fade duration="750" target="{bitmapimage25}"/>
+				<s:Fade duration="750" target="{bitmapimage26}"/>
+				<s:Fade duration="750" target="{bitmapimage27}"/>
+				<s:Fade duration="750" target="{path4}"/>
+				<s:Fade duration="750" target="{path3}"/>
+				<s:Animate duration="750" target="{list1}">
+					<s:SimpleMotionPath property="x"/>
+					<s:SimpleMotionPath property="y"/>
+				</s:Animate>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Table" interruptionBehavior="stop" toState="Start">
+			<s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage2}"/>
+				<s:Fade duration="750" target="{textinput2}"/>
+				<s:Fade duration="750" target="{bitmapimage1}"/>
+				<s:Fade duration="750" target="{textinput1}"/>
+				<s:Fade duration="750" target="{richtext2}"/>
+				<s:Fade duration="750" target="{richtext1}"/>
+				<s:Fade duration="750" target="{button1}"/>
+				<s:Fade duration="750" target="{richtext3}"/>
+				<s:Fade duration="750" target="{bitmapimage31}"/>
+				<s:Fade duration="750" target="{bitmapimage29}"/>
+				<s:Fade duration="750" target="{m_btnCheck}"/>
+				<s:Fade duration="750" target="{m_txtRaise}"/>
+				<s:Fade duration="750" target="{richtext22}"/>
+				<s:Fade duration="750" target="{bitmapimage32}"/>
+				<s:Fade duration="750" target="{bitmapimage30}"/>
+				<s:Fade duration="750" target="{textinput3}"/>
+				<s:Fade duration="750" target="{button13}"/>
+				<s:Fade duration="750" target="{richtext23}"/>
+				<s:Fade duration="750" target="{m_btnShowhand}"/>
+				<s:Fade duration="750" target="{m_btnLeaveGame}"/>
+				<s:Fade duration="750" target="{richtext19}"/>
+				<s:Fade duration="750" target="{m_btnFold}"/>
+				<s:Fade duration="750" target="{m_btnRaise}"/>
+				<s:Fade duration="750" target="{m_btnGotoLobby}"/>
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="Table" interruptionBehavior="stop" toState="Lobby_Cash">
+			<s:Parallel>
+				<s:Parallel target="{bitmapimage3}">
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="width"/>
+						<s:SimpleMotionPath property="height"/>
+					</s:Animate>
+					<s:Fade duration="750"/>
+				</s:Parallel>
+				<s:Fade duration="750" target="{bitmapimage11}"/>
+				<s:Fade duration="750" target="{bitmapimage19}"/>
+				<s:Fade duration="750" target="{bitmapimage4}"/>
+				<s:Fade duration="750" target="{bitmapimage17}"/>
+				<s:Fade duration="750" target="{bitmapimage6}"/>
+				<s:Fade duration="750" target="{bitmapimage18}"/>
+				<s:Fade duration="750" target="{richtext10}"/>
+				<s:Fade duration="750" target="{richtext4}"/>
+				<s:Fade duration="750" target="{richtext7}"/>
+				<s:Fade duration="750" target="{richtext11}"/>
+				<s:Fade duration="750" target="{richtext6}"/>
+				<s:Fade duration="750" target="{richtext8}"/>
+				<s:Fade duration="750" target="{button4}"/>
+				<s:Fade duration="750" target="{bitmapimage7}"/>
+				<s:Fade duration="750" target="{m_btnHoldem}"/>
+				<s:Fade duration="750" target="{m_btnSitNGo}"/>
+				<s:Fade duration="750" target="{bitmapimage8}"/>
+				<s:Fade duration="750" target="{bitmapimage9}"/>
+				<s:Fade duration="750" target="{m_btnLobbyCashier}"/>
+				<s:Fade duration="750" target="{m_btnLobbyLogout}"/>
+				<s:Fade duration="750" target="{bitmapimage31}"/>
+				<s:Fade duration="750" target="{bitmapimage29}"/>
+				<s:Fade duration="750" target="{m_btnCheck}"/>
+				<s:Fade duration="750" target="{m_txtRaise}"/>
+				<s:Fade duration="750" target="{richtext22}"/>
+				<s:Fade duration="750" target="{bitmapimage32}"/>
+				<s:Fade duration="750" target="{bitmapimage30}"/>
+				<s:Fade duration="750" target="{textinput3}"/>
+				<s:Fade duration="750" target="{button13}"/>
+				<s:Fade duration="750" target="{richtext23}"/>
+				<s:Fade duration="750" target="{m_btnShowhand}"/>
+				<s:Fade duration="750" target="{m_btnLeaveGame}"/>
+				<s:Fade duration="750" target="{richtext19}"/>
+				<s:Fade duration="750" target="{m_btnFold}"/>
+				<s:Fade duration="750" target="{m_btnRaise}"/>
+				<s:Fade duration="750" target="{m_btnGotoLobby}"/>
+				<s:Parallel target="{list1}">
+					<s:Animate duration="750">
+						<s:SimpleMotionPath property="x"/>
+						<s:SimpleMotionPath property="y"/>
+					</s:Animate>
+					<s:Fade duration="750"/>
+				</s:Parallel>
+			</s:Parallel>
+		</s:Transition>
+	</s:transitions>
+</s:Application>

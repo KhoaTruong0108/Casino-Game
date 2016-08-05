@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="56" height="21">
+	<fx:Metadata>[HostComponent("spark.components.Button")]</fx:Metadata>
+	<s:states>
+		<s:State name="up"/>
+		<s:State name="over"/>
+		<s:State name="down"/>
+		<s:State name="disabled"/>
+	</s:states>
+	<s:BitmapImage d:userLabel="Shape 15" x="0" y="0" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 15.png')"
+				   visible.disabled="false"
+				   visible.down="false"/>
+	<s:BitmapImage d:userLabel="Shape 15 copy" x="0" y="0" smooth="true"
+				   source="@Embed('/assets/images/table/Shape 15 copy.png')"
+				   alpha.disabled="0.5"
+				   visible.over="false"/>
+	<s:RichText d:userLabel="Send" x="13" y="7" color="#fefefe" fontFamily="Verdana" fontSize="12"
+				lineHeight="120%" whiteSpaceCollapse="preserve"
+				alpha.disabled="0.5" tabStops.disabled="S0" text.disabled="Send">
+		<s:content.over><s:p><s:span>Send</s:span></s:p></s:content.over>
+		<s:content.down><s:p><s:span>Send</s:span></s:p></s:content.down>
+		<s:content.up><s:p><s:span>Send</s:span></s:p></s:content.up>
+	</s:RichText>
+</s:Skin>

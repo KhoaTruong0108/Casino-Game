@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:d="http://ns.adobe.com/fxg/2008/dt"		 
+		 xmlns:fc="http://ns.adobe.com/flashcatalyst/2009" width="355" height="230">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import model.M_MessageBox;
+			
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			
+			[Bindable]
+			private var m_mMessageBox:M_MessageBox = M_MessageBox.getInstance();
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				PopUpManager.removePopUp(this);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:DesignLayer d:userLabel="Layer 1">
+		<s:BitmapImage d:userLabel="Shape 14" x="0" y="0" d:locked="true" smooth="true"
+					   height="230"
+					   source="@Embed('/assets/images/box_jointable/Shape 14.png')"/>
+		<s:RichText d:userLabel="JOIN TABLE" x="10" y="15" width="336" color="#c6ff00"
+					fontFamily="Arial" fontSize="18" fontWeight="bold" kerning="off"
+					lineHeight="120%" textAlign="center" trackingRight="1%"
+					text="{m_mMessageBox.strTitle}"
+					whiteSpaceCollapse="preserve">			
+		</s:RichText>
+		<s:RichText d:userLabel="Buy in :" x="10" y="49" width="336" height="120" color="#ffffff"
+					fontFamily="Arial" fontSize="14" kerning="off" lineHeight="120%"
+					text="{m_mMessageBox.strMessage}" textAlign="center" trackingRight="1%"
+					verticalAlign="middle" whiteSpaceCollapse="preserve">			
+		</s:RichText>
+		<s:Button x="136" y="177" label="   Ok" 
+				  skinClass="components.btn_Cancel" click="button1_clickHandler(event)"/>
+	</fx:DesignLayer>
+</s:Group>
+
+

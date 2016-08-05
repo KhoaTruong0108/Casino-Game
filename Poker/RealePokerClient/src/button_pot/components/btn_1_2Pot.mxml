@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Skin xmlns:s="library://ns.adobe.com/flex/spark"
+		xmlns:fx="http://ns.adobe.com/mxml/2009"
+		xmlns:d="http://ns.adobe.com/fxg/2008/dt"
+		width="109" height="49">
+	<fx:Metadata>[HostComponent("spark.components.Button")]</fx:Metadata>
+	<s:states>
+		<s:State name="up"/>
+		<s:State name="over"/>
+		<s:State name="down"/>
+		<s:State name="disabled"/>
+	</s:states>
+	<fx:DesignLayer d:userLabel="Layer 1">
+		<s:BitmapImage d:userLabel="Shape 16 copy's Outer Glow" x="0" y="0" blendMode="screen"
+					   smooth="true"
+					   source="@Embed('button_pot/assets/images/button_update/Shape 16 copy_s Outer Glow.png')"
+					   visible.disabled="false"
+					   visible.down="false"
+					   visible.up="false"/>
+		<s:BitmapImage x="14" y="14" smooth="true" source="@Embed('button_pot/assets/images/pot_bg2.png')"/>
+		<s:RichText id="labelDisplay" d:userLabel="1_2 Pot" x="32" y="20" color="#ffffff"
+					fontFamily="Verdana" fontSize="11" fontWeight="bold" lineHeight="120%"
+					whiteSpaceCollapse="preserve"
+					x.over="30" color.over="#FDFF00" fontSize.over="12" tabStops.over="S0 S50">
+		</s:RichText>
+	</fx:DesignLayer>
+</s:Skin>
